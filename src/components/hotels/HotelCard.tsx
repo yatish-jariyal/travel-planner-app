@@ -1,16 +1,6 @@
-import React from "react";
+import { Hotel } from "../../redux/travelSlice";
 
-interface Hotel {
-  hotelName: string;
-  stars: string;
-  availability: string;
-  price: string;
-  description: string;
-  location: string;
-  ratings: string;
-}
-
-const HotelCard: React.FC<{ hotel: Hotel }> = ({ hotel }) => {
+const HotelCard = ({ hotel }: { hotel: Hotel }) => {
   return (
     <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
       <h3 className="text-lg font-semibold">{hotel.hotelName}</h3>

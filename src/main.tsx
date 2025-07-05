@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App.tsx";
-import TravelTabs from "../src/pages/TravelTabs.tsx";
+import TravelTabs from "./components/common/TravelTabs.tsx";
 import store from "./redux/store.ts";
 
 createRoot(document.getElementById("root")!).render(

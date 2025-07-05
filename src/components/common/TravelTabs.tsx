@@ -1,11 +1,11 @@
 import React, { useEffect, useState, JSX } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { selectHotels, selectAttractions } from "../redux/travelSlice";
-import { selectFlights } from "../redux/flightsSlice";
-import FlightsList from "../components/FlightsList";
-import HotelsList from "../components/HotelsList";
-import AttractionsList from "../components/AttractionsList";
+import { selectHotels, selectAttractions } from "../../redux/travelSlice";
+import { selectFlights } from "../../redux/flightsSlice";
+import FlightsList from "../flights/FlightsList";
+import HotelsList from "../hotels/HotelsList";
+import AttractionsList from "../attractions/AttractionsList";
 
 const TravelTabsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
@@ -15,7 +15,7 @@ const TravelTabsPage: React.FC = () => {
   const hotels = useSelector(selectHotels);
   const attractions = useSelector(selectAttractions);
   const flightsState = useSelector(selectFlights);
-  const flights = flightsState.flights; // Assuming flightsState has a property 'flights' which is an array of Flight
+  const flights = flightsState.flights;
 
   const navigate = useNavigate();
 
@@ -121,7 +121,6 @@ const TravelTabsPage: React.FC = () => {
           ))}
         </div>
       </nav>
-      {/* Content Window */}
       <div className="bg-white shadow-sm rounded-lg m-6">
         {activeTab === "hotels" && <HotelsList hotels={hotels} />}
         {activeTab === "flights" && <FlightsList flights={flights} />}

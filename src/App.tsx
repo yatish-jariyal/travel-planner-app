@@ -1,16 +1,12 @@
-import FlightForm from "./components/FlightForm";
-import Navbar from "./components/Navbar";
+import Header from "./components/common/Header";
+import TravelForm from "./components/travelForm/TravelForm";
 
 const App = () => {
   return (
-    <div>
-      <div>
-        <Navbar />
-      </div>
-      <div>
-        <FlightForm />
-      </div>
-    </div>
+    <>
+      <Header />
+      <TravelForm />
+    </>
   );
 };
 

@@ -1,30 +1,19 @@
-import React from "react";
-import { Hotel } from "../redux/travelSlice";
+import { Hotel } from "../../redux/travelSlice";
+import EmptyHotelsList from "./EmptyHotelsList";
 import HotelCard from "./HotelCard";
+import HotelsLoader from "./HotelsLoader";
 
 interface HotelListProps {
   hotels: Hotel[];
 }
 
-const HotelList: React.FC<HotelListProps> = ({ hotels }) => {
+const HotelList = ({ hotels }: HotelListProps) => {
   if (!hotels) {
-    return (
-      <div className="flex justify-center items-center py-10">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-        <span className="ml-2">Loading hotels...</span>
-      </div>
-    );
+    return <HotelsLoader />;
   }
 
   if (hotels.length === 0) {
-    return (
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-        <h3 className="font-medium">No hotels found</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          Try adjusting your search criteria.
-        </p>
-      </div>
-    );
+    return <EmptyHotelsList />;
   }
 
   return (

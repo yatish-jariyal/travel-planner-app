@@ -1,4 +1,4 @@
-import { Flight } from "../redux/IFlights";
+import { Flight } from "../../redux/IFlights";
 import FlightCard from "./FlightCard";
 
 interface FlightListProps {

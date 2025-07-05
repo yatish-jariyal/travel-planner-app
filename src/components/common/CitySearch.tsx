@@ -1,39 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { getAirport } from "../utils/getFlights";
+import { getAirport } from "../../utils/getFlights";
+import { LocationData } from "../../utils/types";
 
-// Define the type for the location data based on the provided response structure
-interface GeoCode {
-  latitude: number;
-  longitude: number;
-}
-
-interface Address {
-  cityName: string;
-  cityCode: string;
-  countryName: string;
-  countryCode: string;
-  stateCode: string;
-  regionCode: string;
-}
-
-interface Analytics {
-  travelers: {
-    score: number;
-  };
-}
-
-export interface LocationData {
-  type: string;
-  name: string;
-  id: string;
-  timeZoneOffset: string;
-  iataCode: string;
-  geoCode: GeoCode;
-  address: Address;
-  analytics: Analytics;
-}
-
-// Add props interface with callbacks
 interface CitySearchProps {
   onQueryChange?: (query: string) => void;
   onCitySelect?: (city: LocationData) => void;

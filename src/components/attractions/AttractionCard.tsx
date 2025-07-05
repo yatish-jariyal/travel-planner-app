@@ -1,16 +1,16 @@
-import { Attraction } from "../redux/travelSlice";
+import { Attraction } from "../../redux/travelSlice";
 
 interface AttractionCardProps {
   attraction: Attraction;
 }
 
-const AttractionCard: React.FC<AttractionCardProps> = ({ attraction }) => {
+const AttractionCard = ({ attraction }: AttractionCardProps) => {
   const { attractionName, description, location, entryFee, ratings, imageUrl } =
     attraction;
 
   return (
     <div className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      {/* You could add an image here */}
+      {/* Can add an image here */}
       {imageUrl && <img src={imageUrl} alt="image" />}
       <div className="h-40 bg-gray-200"></div>
 
