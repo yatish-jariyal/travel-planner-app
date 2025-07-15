@@ -20,7 +20,7 @@ export const getData = async (body: FlightArguments): Promise<Flight[]> => {
 export const getAirport = async (city: string) => {
   const token = await getToken();
   const response = await axios.get(
-    `https://test.api.amadeus.com/v1/reference-data/locations?subType=CITY&keyword=${city}&page%5Blimit%5D=10&page%5Boffset%5D=0&sort=analytics.travelers.score&view=FULL`,
+    `https://test.api.amadeus.com/v1/reference-data/locations?subType=AIRPORT,CITY&keyword=${city}&page%5Blimit%5D=10&page%5Boffset%5D=0&sort=analytics.travelers.score&view=FULL`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

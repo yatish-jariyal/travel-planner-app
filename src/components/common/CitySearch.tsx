@@ -21,7 +21,6 @@ const CitySearch: React.FC<CitySearchProps> = ({
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Function to fetch city data from API
   const fetchCities = async (searchQuery: string) => {
     if (searchQuery.length < 2) {
       setLocations([]);
@@ -51,33 +50,27 @@ const CitySearch: React.FC<CitySearchProps> = ({
     }
   };
 
-  // Handle input change with debounce
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
 
-    // Notify parent component about the query change
     if (onQueryChange) {
       onQueryChange(value);
     }
 
-    // Clear any existing timeout
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
 
-    // Set a new timeout to delay the API call
     debounceTimeout.current = setTimeout(() => {
       fetchCities(value);
     }, 500);
   };
 
-  // Handle city selection
   const handleCitySelect = (location: LocationData) => {
     setQuery(location.iataCode);
     setShowDropdown(false);
 
-    // Notify parent component about the selected city
     if (onQueryChange) {
       onQueryChange(location.iataCode);
     }

@@ -12,8 +12,12 @@ import { createFlightsPayload } from "../../utils/getFlights";
 import { LocationData } from "../../utils/types";
 
 const TravelForm = () => {
-  const [startDate, setStartDate] = useState("2025-04-10");
-  const [endDate, setEndDate] = useState("2025-04-20");
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(
+    new Date(Date.now() + 86400000).toISOString().split("T")[0]
+  );
   const [loading, setLoading] = useState(false);
   const [originQuery, setOriginQuery] = useState<string>("");
   const [originCity, setOriginCity] = useState<LocationData | null>(null);
