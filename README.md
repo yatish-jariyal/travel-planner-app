@@ -1,54 +1,71 @@
-# React + TypeScript + Vite
+# Travel Planner App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based Travel Planner application that helps users search for airports, create and manage itineraries, and generate travel suggestions using modern web technologies.
 
-Currently, two official plugins are available:
+## Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Airport Search:** Look up airports by code or name using the `@nwpr/airport-codes` database.
+- **Itinerary Management:** Add, edit, and remove destinations to build a complete travel plan.
+- **Interactive Tabs:** Navigate between different parts of your trip with the `TravelTabs` component.
+- **State Management:** Leverage Redux Toolkit (`@reduxjs/toolkit`) for predictable and centralized application state.
+- **AI-Powered Suggestions:** Integrate with Google Generative AI (`@google/generative-ai`) to get personalized travel recommendations.
+- **Utilities:** Shared helper functions in `src/utils/helper.ts` for common tasks like formatting dates and handling API requests.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React** + **TypeScript**
+- **Vite** for fast development builds and HMR
+- **Tailwind CSS** for utility-first styling
+- **Redux Toolkit** for state management
+- **Axios** for HTTP requests
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yatish-jariyal/travel-planner-app.git
+   cd travel-planner-app
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+### Available Scripts
+
+- **`npm run dev`**: Start the development server
+- **`npm run build`**: Build for production (output to `dist/`)
+- **`npm run preview`**: Preview the production build
+- **`npm run lint`**: Run ESLint checks
+
+### Running the App
+
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open your browser and navigate to `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```
+travel-planner-app/
+├── public/             # Static assets
+├── src/
+│   ├── components/     # Reusable UI components
+│   │   └── common/
+│   │       └── TravelTabs.tsx  # Tab navigation for itinerary
+│   ├── redux/
+│   │   └── store.ts    # Redux store configuration
+│   ├── utils/
+│   │   └── helper.ts   # Shared helper functions
+│   └── main.tsx        # Application entry point
+├── .eslintrc.js        # Linting rules
+├── tsconfig.json       # TypeScript configuration
+├── tailwind.config.js  # Tailwind CSS configuration
+├── vite.config.ts      # Vite configuration
+└── package.json        # Project metadata and scripts
 ```
