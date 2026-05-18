@@ -19,6 +19,7 @@ const TravelForm = () => {
     new Date(Date.now() + 86400000).toISOString().split("T")[0]
   );
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [originQuery, setOriginQuery] = useState<string>("");
   const [originCity, setOriginCity] = useState<LocationData | null>(null);
   const [destinationQuery, setDestinationQuery] = useState<string>("");
@@ -48,9 +49,10 @@ const TravelForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setSubmitError(null);
     try {
       if (!originCity || !destinationCity) {
-        console.log("Origin or destination city is not selected");
+        setSubmitError("Please select both origin and destination.");
         return;
       }
       const flightsPayload = createFlightsPayload({
@@ -68,7 +70,11 @@ const TravelForm = () => {
       await dispatch(fetchFlightsInfo(flightsPayload));
       navigate("/travel");
     } catch (error) {
-      console.log(error);
+      setSubmitError(
+        error instanceof Error ? error.message : "Failed to plan trip. Try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,6 +111,7 @@ const TravelForm = () => {
             placeholder="To"
           />
         </div>
+        {submitError && <p className="text-sm text-red-600">{submitError}</p>}
         <SubmitButton isLoading={loading} />
       </form>
     </div>

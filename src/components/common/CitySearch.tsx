@@ -18,7 +18,7 @@ const CitySearch: React.FC<CitySearchProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const fetchCities = async (searchQuery: string) => {
@@ -32,7 +32,7 @@ const CitySearch: React.FC<CitySearchProps> = ({
     setError(null);
 
     try {
-      const response = await getAirport(query);
+      const response = await getAirport(searchQuery);
       if (!response) {
         throw new Error("Failed to fetch city data");
       }

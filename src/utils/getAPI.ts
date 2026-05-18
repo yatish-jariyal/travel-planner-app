@@ -2,6 +2,15 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { TravelDataResponse } from "../redux/travelSlice";
 import axios from "axios";
 
+const isString = (v: unknown): v is string => typeof v === "string";
+
+const isTravelDataResponse = (data: unknown): data is TravelDataResponse => {
+  if (!data || typeof data !== "object") return false;
+  const d = data as Record<string, unknown>;
+  if (!Array.isArray(d.hotels) || !Array.isArray(d.attractions)) return false;
+  return true;
+};
+
 export const getTravelInfoFromAI = async (
   destination: string,
   startDate: string,
@@ -48,20 +57,33 @@ Please include 20 hotels sorted by overall value (considering price, location, a
       throw new Error("Failed to get valid response from AI");
     }
 
-    const jsonData = JSON.parse(jsonString) as TravelDataResponse;
-
-    const googleApiKey = "AIzaSyCGlIt-RotqEu_r9uSkOoeNCUfI4u7EGIc";
-    const cxId = "a6d41517d72f94bf6";
-
-    for (let i = 0; i < jsonData?.attractions.length; i++) {
-      const imageResponse = await axios.get(
-        `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(
-          jsonData.attractions[i].imageUrl
-        )}&cx=${cxId}&searchType=image&key=${googleApiKey}`
-      );
-      const imageUrl = imageResponse.data.items[0].link;
-      jsonData.attractions[i].imageUrl = imageUrl;
+    const parsed = JSON.parse(jsonString) as unknown;
+    if (!isTravelDataResponse(parsed)) {
+      throw new Error("Invalid travel data response shape");
     }
+    const jsonData = parsed;
+
+    const googleApiKey = import.meta.env.VITE_GOOGLE_CUSTOM_SEARCH_KEY;
+    const cxId = import.meta.env.VITE_GOOGLE_CUSTOM_SEARCH_CX;
+
+    if (!isString(googleApiKey) || !isString(cxId)) {
+      throw new Error("Missing Google Custom Search configuration");
+    }
+
+    await Promise.allSettled(
+      jsonData.attractions.map(async (attraction) => {
+        const imageResponse = await axios.get(
+          `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(
+            attraction.imageUrl
+          )}&cx=${cxId}&searchType=image&key=${googleApiKey}`
+        );
+        const imageUrl = imageResponse?.data?.items?.[0]?.link;
+        if (isString(imageUrl)) {
+          attraction.imageUrl = imageUrl;
+        }
+      })
+    );
+
     return jsonData;
   } catch (error) {
     console.error("Error fetching travel info:", error);

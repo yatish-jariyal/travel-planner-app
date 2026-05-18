@@ -14,18 +14,20 @@ const initialState: FlightsState = {
   error: null,
 };
 
-export const fetchFlightsInfo = createAsyncThunk(
-  "travel/fetchFlightsInfo",
-  async (body: FlightArguments) => {
-    try {
-      const response = await getData(body);
-      console.log("redux response", response);
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
+export const fetchFlightsInfo = createAsyncThunk<
+  Flight[],
+  FlightArguments,
+  { rejectValue: string }
+>("travel/fetchFlightsInfo", async (body, { rejectWithValue }) => {
+  try {
+    const response = await getData(body);
+    return response;
+  } catch (error) {
+    return rejectWithValue(
+      error instanceof Error ? error.message : "Failed to fetch flights"
+    );
   }
-);
+});
 
 const flightsSlice = createSlice({
   name: "flights",
@@ -38,17 +40,17 @@ const flightsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchFlightsInfo.fulfilled, (state, action) => {
-        console.log("in redux", action.payload);
         state.status = "succeeded";
-        state.flights = action?.payload || [];
+        state.flights = action.payload || [];
       })
       .addCase(fetchFlightsInfo.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message || "Something went wrong";
+        state.error = action.payload || action.error.message || "Something went wrong";
       });
   },
 });
 
 export default flightsSlice.reducer;
-export const selectFlights = (state: { flights: FlightsState }) =>
-  state.flights;
+import type { RootState } from "./store";
+
+export const selectFlights = (state: RootState) => state.flights;

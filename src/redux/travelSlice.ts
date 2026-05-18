@@ -94,11 +94,9 @@ const travelSlice = createSlice({
 export const { clearTravelData } = travelSlice.actions;
 export default travelSlice.reducer;
 
-export const selectHotels = (state: { travel: TravelState }) =>
-  state.travel.hotels;
-export const selectAttractions = (state: { travel: TravelState }) =>
-  state.travel.attractions;
-export const selectTravelStatus = (state: { travel: TravelState }) =>
-  state.travel.status;
-export const selectTravelError = (state: { travel: TravelState }) =>
-  state.travel.error;
+import type { RootState } from "./store";
+
+export const selectHotels = (state: RootState) => state.travel.hotels;
+export const selectAttractions = (state: RootState) => state.travel.attractions;
+export const selectTravelStatus = (state: RootState) => state.travel.status;
+export const selectTravelError = (state: RootState) => state.travel.error;

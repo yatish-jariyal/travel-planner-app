@@ -32,17 +32,15 @@ const TravelTabsPage: React.FC = () => {
   const tabs: {
     id: "flights" | "hotels" | "attractions";
     label: string;
-    color: string;
-    activeColor: string;
-    indicatorColor: string;
+    activeTextClass: string;
+    indicatorClass: string;
     icon: JSX.Element;
   }[] = [
     {
       id: "flights",
       label: "Flights",
-      color: "blue",
-      activeColor: "blue-600",
-      indicatorColor: "blue-600",
+      activeTextClass: "text-blue-600",
+      indicatorClass: "bg-blue-600",
       icon: (
         <path
           strokeLinecap="round"
@@ -55,9 +53,8 @@ const TravelTabsPage: React.FC = () => {
     {
       id: "hotels",
       label: "Hotels",
-      color: "indigo",
-      activeColor: "indigo-600",
-      indicatorColor: "indigo-600",
+      activeTextClass: "text-indigo-600",
+      indicatorClass: "bg-indigo-600",
       icon: (
         <path
           strokeLinecap="round"
@@ -70,9 +67,8 @@ const TravelTabsPage: React.FC = () => {
     {
       id: "attractions",
       label: "Attractions",
-      color: "amber",
-      activeColor: "amber-600",
-      indicatorColor: "amber-600",
+      activeTextClass: "text-amber-600",
+      indicatorClass: "bg-amber-600",
       icon: (
         <path
           strokeLinecap="round"
@@ -94,7 +90,7 @@ const TravelTabsPage: React.FC = () => {
               key={tab.id}
               className={`py-4 px-6 font-medium text-lg transition-colors relative ${
                 activeTab === tab.id
-                  ? `text-${tab.activeColor}`
+                  ? tab.activeTextClass
                   : "text-gray-500 hover:text-gray-700"
               }`}
               onClick={() => setActiveTab(tab.id)}
@@ -114,7 +110,7 @@ const TravelTabsPage: React.FC = () => {
               </div>
               {activeTab === tab.id && (
                 <div
-                  className={`absolute bottom-0 left-0 w-full h-1 bg-${tab.indicatorColor}`}
+                  className={`absolute bottom-0 left-0 w-full h-1 ${tab.indicatorClass}`}
                 ></div>
               )}
             </button>
