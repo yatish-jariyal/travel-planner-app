@@ -1,111 +1,164 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { fetchFlightsInfo } from "../../redux/flightsSlice";
+import {
+  clearFlightsData,
+  fetchFlightsInfo,
+  selectFlightsStatus,
+} from "../../redux/flightsSlice";
 import type { AppDispatch } from "../../redux/store";
-import { fetchTravelInfo } from "../../redux/travelSlice";
-import CitySearch from "../common/CitySearch";
+import {
+  clearTravelData,
+  fetchTravelInfo,
+  selectTravelStatus,
+} from "../../redux/travelSlice";
+import { createFlightsPayload } from "../../utils/getFlights";
+import { validateTravelForm } from "../../utils/travelFormValidation";
+import type { LocationData } from "../../utils/types";
 import AppLoader from "../common/AppLoader";
+import CitySearch from "../common/CitySearch";
 import DateInput from "../common/DateInput";
 import SubmitButton from "../common/SubmitButton";
-import { createFlightsPayload } from "../../utils/getFlights";
-import { LocationData } from "../../utils/types";
 
 const TravelForm = () => {
-  const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const today = new Date().toISOString().split("T")[0];
+  const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(
     new Date(Date.now() + 86400000).toISOString().split("T")[0]
   );
-  const [loading, setLoading] = useState(false);
-  const [originQuery, setOriginQuery] = useState<string>("");
+  const [originQuery, setOriginQuery] = useState("");
   const [originCity, setOriginCity] = useState<LocationData | null>(null);
-  const [destinationQuery, setDestinationQuery] = useState<string>("");
+  const [destinationQuery, setDestinationQuery] = useState("");
   const [destinationCity, setDestinationCity] = useState<LocationData | null>(
     null
   );
-
-  const handleOriginQueryChange = (query: string) => {
-    setOriginQuery(query);
-  };
-  const handleDestinationQueryChange = (query: string) => {
-    setDestinationQuery(query);
-  };
-
-  const handleOriginCitySelect = (city: LocationData) => {
-    setOriginCity(city);
-    console.log("Selected origin city:", city);
-  };
-  const handleDestinationCitySelect = (city: LocationData) => {
-    setDestinationCity(city);
-    console.log("Selected destination city:", city);
-  };
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const errorSummaryRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const flightsStatus = useSelector(selectFlightsStatus);
+  const travelStatus = useSelector(selectTravelStatus);
+  const isLoading =
+    flightsStatus === "loading" || travelStatus === "loading";
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      if (!originCity || !destinationCity) {
-        console.log("Origin or destination city is not selected");
-        return;
-      }
-      const flightsPayload = createFlightsPayload({
-        originCode: originCity.iataCode,
-        destinationCode: destinationCity.iataCode,
-        startDate,
-      });
-      await dispatch(
+  useEffect(() => {
+    if (validationErrors.length > 0) {
+      errorSummaryRef.current?.focus();
+    }
+  }, [validationErrors]);
+
+  const handleOriginQueryChange = (query: string) => {
+    setOriginQuery(query);
+    if (query !== originCity?.iataCode) {
+      setOriginCity(null);
+    }
+  };
+
+  const handleDestinationQueryChange = (query: string) => {
+    setDestinationQuery(query);
+    if (query !== destinationCity?.iataCode) {
+      setDestinationCity(null);
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const errors = validateTravelForm({
+      originCity,
+      destinationCity,
+      startDate,
+      endDate,
+    });
+    setValidationErrors(errors);
+
+    if (errors.length > 0 || !originCity || !destinationCity) {
+      return;
+    }
+
+    dispatch(clearTravelData());
+    dispatch(clearFlightsData());
+
+    const flightsPayload = createFlightsPayload({
+      originCode: originCity.iataCode,
+      destinationCode: destinationCity.iataCode,
+      startDate,
+    });
+
+    await Promise.all([
+      dispatch(
         fetchTravelInfo({
           destinationCity: destinationCity.address.cityName,
           startDate,
           endDate,
         })
-      );
-      await dispatch(fetchFlightsInfo(flightsPayload));
-      navigate("/travel");
-    } catch (error) {
-      console.log(error);
-    }
+      ),
+      dispatch(fetchFlightsInfo(flightsPayload)),
+    ]);
+
+    navigate("/travel");
   };
 
   return (
     <div className="relative">
-      {loading && <AppLoader city={destinationCity} />}
+      {isLoading && <AppLoader city={destinationCity} />}
 
       <form
         onSubmit={handleSubmit}
+        noValidate
+        aria-busy={isLoading}
         className="flex flex-col items-center gap-9 border-2 border-teal-800 p-9 rounded-md m-9 bg-white"
       >
-        <p className="text-3xl font-bold mb-10 text-teal-700">Plan Your Trip</p>
-        <div className="flex gap-9 w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-10 text-teal-700">
+          Plan Your Trip
+        </h1>
+
+        {validationErrors.length > 0 && (
+          <div
+            ref={errorSummaryRef}
+            className="w-full max-w-md rounded-lg border border-red-300 bg-red-50 p-4 text-red-900"
+            role="alert"
+            tabIndex={-1}
+          >
+            <p className="font-semibold">Check your trip details:</p>
+            <ul className="mt-2 list-disc pl-5">
+              {validationErrors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="flex w-full max-w-md flex-col gap-6 sm:flex-row">
           <CitySearch
+            label="Origin"
             onQueryChange={handleOriginQueryChange}
-            onCitySelect={handleOriginCitySelect}
+            onCitySelect={setOriginCity}
             defaultValue={originQuery}
           />
           <CitySearch
+            label="Destination"
             onQueryChange={handleDestinationQueryChange}
-            onCitySelect={handleDestinationCitySelect}
+            onCitySelect={setDestinationCity}
             defaultValue={destinationQuery}
           />
         </div>
-        <div className="flex gap-9 w-full max-w-md">
+        <div className="flex w-full max-w-md flex-col gap-6 sm:flex-row">
           <DateInput
+            label="Departure date"
             value={startDate}
-            onChange={(value: string) => setStartDate(value)}
-            placeholder="From"
+            min={today}
+            onChange={setStartDate}
           />
           <DateInput
+            label="Return date"
             value={endDate}
-            onChange={(value: string) => setEndDate(value)}
-            placeholder="To"
+            min={startDate}
+            onChange={setEndDate}
           />
         </div>
-        <SubmitButton isLoading={loading} />
+        <SubmitButton isLoading={isLoading} />
       </form>
     </div>
   );

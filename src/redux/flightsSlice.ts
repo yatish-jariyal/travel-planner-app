@@ -35,7 +35,13 @@ export const fetchFlightsInfo = createAsyncThunk<
 const flightsSlice = createSlice({
   name: "flights",
   initialState,
-  reducers: {},
+  reducers: {
+    clearFlightsData: (state) => {
+      state.flights = [];
+      state.status = "idle";
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFlightsInfo.pending, (state) => {
@@ -54,6 +60,11 @@ const flightsSlice = createSlice({
   },
 });
 
+export const { clearFlightsData } = flightsSlice.actions;
 export default flightsSlice.reducer;
 export const selectFlights = (state: { flights: FlightsState }) =>
   state.flights;
+export const selectFlightsStatus = (state: { flights: FlightsState }) =>
+  state.flights.status;
+export const selectFlightsError = (state: { flights: FlightsState }) =>
+  state.flights.error;

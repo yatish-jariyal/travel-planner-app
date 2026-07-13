@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useId, useRef } from "react";
 import { getAirport } from "../../utils/getFlights";
 import { LocationData } from "../../utils/types";
 
@@ -6,12 +6,14 @@ interface CitySearchProps {
   onQueryChange?: (query: string) => void;
   onCitySelect?: (city: LocationData) => void;
   defaultValue?: string;
+  label: string;
 }
 
 const CitySearch: React.FC<CitySearchProps> = ({
   onQueryChange,
   onCitySelect,
   defaultValue = "",
+  label,
 }) => {
   const [query, setQuery] = useState<string>(defaultValue);
   const [locations, setLocations] = useState<LocationData[]>([]);
@@ -20,6 +22,8 @@ const CitySearch: React.FC<CitySearchProps> = ({
   const [error, setError] = useState<string | null>(null);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputId = useId();
+  const dropdownId = `${inputId}-options`;
 
   const fetchCities = async (searchQuery: string) => {
     if (searchQuery.length < 2) {
@@ -32,7 +36,7 @@ const CitySearch: React.FC<CitySearchProps> = ({
     setError(null);
 
     try {
-      const response = await getAirport(query);
+      const response = await getAirport(searchQuery);
       if (!response) {
         throw new Error("Failed to fetch city data");
       }
@@ -108,16 +112,22 @@ const CitySearch: React.FC<CitySearchProps> = ({
 
   return (
     <div className="city-search-container relative w-full max-w-md">
+      <label htmlFor={inputId} className="mb-1 block text-sm font-medium text-gray-700">
+        {label}
+      </label>
       <div className="input-wrapper relative">
         <input
+          id={inputId}
           type="text"
           value={query}
           onChange={handleInputChange}
           placeholder="Enter city name"
           className="w-full p-2 border border-gray-300 rounded"
-          aria-label="Search for a city"
+          aria-label={`${label} city search`}
           aria-expanded={showDropdown}
-          aria-controls="city-dropdown"
+          aria-controls={dropdownId}
+          aria-autocomplete="list"
+          role="combobox"
         />
         {isLoading && (
           <div className="absolute right-2 top-2">
@@ -126,18 +136,26 @@ const CitySearch: React.FC<CitySearchProps> = ({
         )}
       </div>
 
-      {error && <div className="text-red-500 mt-1">{error}</div>}
+      {error && (
+        <div className="text-red-600 mt-1" role="alert">
+          {error}
+        </div>
+      )}
 
       {showDropdown && locations.length > 0 && (
         <div
-          id="city-dropdown"
+          id={dropdownId}
           ref={dropdownRef}
+          role="listbox"
           className="dropdown-container absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto"
         >
           {locations.map((location) => (
-            <div
+            <button
+              type="button"
               key={location.id}
-              className="dropdown-item p-2 hover:bg-gray-100 cursor-pointer"
+              role="option"
+              aria-selected="false"
+              className="dropdown-item block w-full p-2 text-left hover:bg-gray-100 cursor-pointer"
               onClick={() => handleCitySelect(location)}
             >
               <div className="font-medium">{location.name}</div>
@@ -145,7 +163,7 @@ const CitySearch: React.FC<CitySearchProps> = ({
                 {location.address.cityName}, {location.address.countryName} (
                 {location.iataCode})
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}

@@ -6,7 +6,12 @@ type AppLoaderProps = {
 
 const AppLoader = ({ city }: AppLoaderProps) => {
   return (
-    <div className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-10 rounded-md">
+    <div
+      className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-10 rounded-md"
+      role="status"
+      aria-live="polite"
+      aria-label="Searching for travel options"
+    >
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 mb-4">
           <svg
