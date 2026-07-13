@@ -1,11 +1,12 @@
 import axios from "axios";
-import { getToken } from "./getToken";
+import { getAmadeusConfig, getToken } from "./getToken";
 import { Flight, FlightArguments } from "../redux/IFlights";
 
 export const getData = async (body: FlightArguments): Promise<Flight[]> => {
+  const config = getAmadeusConfig(import.meta.env);
   const token = await getToken();
   const response = await axios.post(
-    "https://test.api.amadeus.com/v2/shopping/flight-offers",
+    `${config.apiBaseUrl}/v2/shopping/flight-offers`,
     body,
     {
       headers: {
@@ -18,17 +19,25 @@ export const getData = async (body: FlightArguments): Promise<Flight[]> => {
 };
 
 export const getAirport = async (city: string) => {
+  const config = getAmadeusConfig(import.meta.env);
   const token = await getToken();
   const response = await axios.get(
-    `https://test.api.amadeus.com/v1/reference-data/locations?subType=AIRPORT,CITY&keyword=${city}&page%5Blimit%5D=10&page%5Boffset%5D=0&sort=analytics.travelers.score&view=FULL`,
+    `${config.apiBaseUrl}/v1/reference-data/locations`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      params: {
+        subType: "AIRPORT,CITY",
+        keyword: city,
+        "page[limit]": 10,
+        "page[offset]": 0,
+        sort: "analytics.travelers.score",
+        view: "FULL",
+      },
     }
   );
-  console.log("airport", response);
   return response;
 };
 

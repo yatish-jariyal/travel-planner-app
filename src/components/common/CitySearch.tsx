@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useId, useRef } from "react";
+import { useState, useEffect, useId, useRef } from "react";
+import type { ChangeEvent } from "react";
 import { getAirport } from "../../utils/getFlights";
 import { LocationData } from "../../utils/types";
 
@@ -9,12 +10,12 @@ interface CitySearchProps {
   label: string;
 }
 
-const CitySearch: React.FC<CitySearchProps> = ({
+const CitySearch = ({
   onQueryChange,
   onCitySelect,
   defaultValue = "",
   label,
-}) => {
+}: CitySearchProps) => {
   const [query, setQuery] = useState<string>(defaultValue);
   const [locations, setLocations] = useState<LocationData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -54,7 +55,7 @@ const CitySearch: React.FC<CitySearchProps> = ({
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
 

@@ -11,8 +11,7 @@ export const formatDuration = (duration: string) => {
 export const formatDate = (dateString: string) => {
   try {
     return format(new Date(dateString), "MMM d, h:mm a");
-  } catch (e) {
-    console.log(e);
+  } catch {
     return dateString;
   }
 };

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Flight, FlightArguments } from "./IFlights";
 import { getData } from "../utils/getFlights";
+import type { RootState } from "./store";
 
 interface FlightsState {
   flights: Flight[];
@@ -62,9 +63,6 @@ const flightsSlice = createSlice({
 
 export const { clearFlightsData } = flightsSlice.actions;
 export default flightsSlice.reducer;
-export const selectFlights = (state: { flights: FlightsState }) =>
-  state.flights;
-export const selectFlightsStatus = (state: { flights: FlightsState }) =>
-  state.flights.status;
-export const selectFlightsError = (state: { flights: FlightsState }) =>
-  state.flights.error;
+export const selectFlights = (state: RootState) => state.flights;
+export const selectFlightsStatus = (state: RootState) => state.flights.status;
+export const selectFlightsError = (state: RootState) => state.flights.error;

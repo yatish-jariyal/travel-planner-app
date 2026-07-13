@@ -90,6 +90,7 @@ src/
 - [Task tracker](tasks.md) — implementation checklist grouped by pull request.
 - [Codebase review](docs/CODEBASE_REVIEW.md) — current architecture, risks, and recommendations.
 - [Environment setup](docs/ENVIRONMENT_SETUP.md) — variables, credential safety, and production architecture.
+- [Production readiness](docs/PRODUCTION_READINESS.md) — release gates, API usage, hosting constraints, and remaining blockers.
 
 ## Contribution workflow
 
@@ -106,4 +107,4 @@ Do not commit API keys, `.env`, build output, or unrelated changes.
 
 ## Current status
 
-This project is under active development. The codebase review identifies reliability, security, error-state, and test-coverage work that should be completed before production deployment.
+This project is under active development. Automated checks and dependency auditing are in place, but production deployment remains blocked until private provider requests move behind a project-owned backend and the previously exposed Google credential is confirmed rotated.

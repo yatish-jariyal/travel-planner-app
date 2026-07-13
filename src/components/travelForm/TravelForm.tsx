@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { addDays, format } from "date-fns";
 import { useNavigate } from "react-router";
 import {
   clearFlightsData,
   fetchFlightsInfo,
   selectFlightsStatus,
 } from "../../redux/flightsSlice";
-import type { AppDispatch } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   clearTravelData,
   fetchTravelInfo,
@@ -21,10 +21,10 @@ import DateInput from "../common/DateInput";
 import SubmitButton from "../common/SubmitButton";
 
 const TravelForm = () => {
-  const today = new Date().toISOString().split("T")[0];
+  const today = format(new Date(), "yyyy-MM-dd");
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(
-    new Date(Date.now() + 86400000).toISOString().split("T")[0]
+    format(addDays(new Date(), 1), "yyyy-MM-dd")
   );
   const [originQuery, setOriginQuery] = useState("");
   const [originCity, setOriginCity] = useState<LocationData | null>(null);
@@ -35,10 +35,10 @@ const TravelForm = () => {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const flightsStatus = useSelector(selectFlightsStatus);
-  const travelStatus = useSelector(selectTravelStatus);
+  const flightsStatus = useAppSelector(selectFlightsStatus);
+  const travelStatus = useAppSelector(selectTravelStatus);
   const isLoading =
     flightsStatus === "loading" || travelStatus === "loading";
 

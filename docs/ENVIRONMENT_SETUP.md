@@ -16,6 +16,7 @@ Replace every required placeholder in `.env`, then start the application with `n
 
 | Variable | Requirement | Purpose |
 | --- | --- | --- |
+| `VITE_AMADEUS_API_BASE_URL` | Required for flights | Amadeus API base URL. `.env.example` uses the test environment. |
 | `VITE_TOKEN_URL` | Required for flights | Amadeus OAuth token endpoint. The test endpoint is included in `.env.example`. |
 | `VITE_CLIENT_ID` | Required for flights | Amadeus application client ID. |
 | `VITE_CLIENT_SECRET` | Required for flights | Amadeus application client secret. It is exposed by the current browser-only architecture. |
