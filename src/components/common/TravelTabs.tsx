@@ -1,134 +1,230 @@
-import React, { useEffect, useState, JSX } from "react";
+import type { JSX, KeyboardEvent } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { selectHotels, selectAttractions } from "../../redux/travelSlice";
-import { selectFlights } from "../../redux/flightsSlice";
+import {
+  selectFlights,
+  selectFlightsError,
+  selectFlightsStatus,
+} from "../../redux/flightsSlice";
+import {
+  selectAttractions,
+  selectHotels,
+  selectTravelError,
+  selectTravelStatus,
+} from "../../redux/travelSlice";
+import AttractionsList from "../attractions/AttractionsList";
 import FlightsList from "../flights/FlightsList";
 import HotelsList from "../hotels/HotelsList";
-import AttractionsList from "../attractions/AttractionsList";
+import AsyncResult from "./AsyncResult";
 
-const TravelTabsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<
-    "flights" | "hotels" | "attractions" | ""
-  >("flights");
+type TabId = "flights" | "hotels" | "attractions";
 
+interface TabDefinition {
+  id: TabId;
+  label: string;
+  activeClassName: string;
+  indicatorClassName: string;
+  icon: JSX.Element;
+}
+
+const tabs: TabDefinition[] = [
+  {
+    id: "flights",
+    label: "Flights",
+    activeClassName: "text-blue-600",
+    indicatorClassName: "bg-blue-600",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M5 13l4 4L19 7"
+      />
+    ),
+  },
+  {
+    id: "hotels",
+    label: "Hotels",
+    activeClassName: "text-indigo-600",
+    indicatorClassName: "bg-indigo-600",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+      />
+    ),
+  },
+  {
+    id: "attractions",
+    label: "Attractions",
+    activeClassName: "text-amber-600",
+    indicatorClassName: "bg-amber-600",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+      />
+    ),
+  },
+];
+
+const TravelTabsPage = () => {
+  const [activeTab, setActiveTab] = useState<TabId>("flights");
   const hotels = useSelector(selectHotels);
   const attractions = useSelector(selectAttractions);
-  const flightsState = useSelector(selectFlights);
-  const flights = flightsState.flights;
-
+  const flights = useSelector(selectFlights).flights;
+  const flightsStatus = useSelector(selectFlightsStatus);
+  const flightsError = useSelector(selectFlightsError);
+  const travelStatus = useSelector(selectTravelStatus);
+  const travelError = useSelector(selectTravelError);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (
-      hotels.length === 0 &&
-      attractions.length === 0 &&
-      flights.length === 0
-    ) {
-      navigate("/");
+    if (flightsStatus === "idle" && travelStatus === "idle") {
+      navigate("/", { replace: true });
     }
-  }, [hotels, attractions, flights, navigate]);
+  }, [flightsStatus, navigate, travelStatus]);
 
-  const tabs: {
-    id: "flights" | "hotels" | "attractions";
-    label: string;
-    color: string;
-    activeColor: string;
-    indicatorColor: string;
-    icon: JSX.Element;
-  }[] = [
-    {
-      id: "flights",
-      label: "Flights",
-      color: "blue",
-      activeColor: "blue-600",
-      indicatorColor: "blue-600",
-      icon: (
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M5 13l4 4L19 7"
-        />
-      ),
-    },
-    {
-      id: "hotels",
-      label: "Hotels",
-      color: "indigo",
-      activeColor: "indigo-600",
-      indicatorColor: "indigo-600",
-      icon: (
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-        />
-      ),
-    },
-    {
-      id: "attractions",
-      label: "Attractions",
-      color: "amber",
-      activeColor: "amber-600",
-      indicatorColor: "amber-600",
-      icon: (
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
-        />
-      ),
-    },
-  ];
+  const focusTab = (tabId: TabId) => {
+    setActiveTab(tabId);
+    requestAnimationFrame(() => document.getElementById(`tab-${tabId}`)?.focus());
+  };
+
+  const handleTabKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentIndex: number
+  ) => {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowRight") {
+      nextIndex = (currentIndex + 1) % tabs.length;
+    } else if (event.key === "ArrowLeft") {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = tabs.length - 1;
+    }
+
+    if (nextIndex !== null) {
+      event.preventDefault();
+      focusTab(tabs[nextIndex].id);
+    }
+  };
+
+  const failures = [
+    flightsStatus === "failed" ? `Flights: ${flightsError}` : null,
+    travelStatus === "failed"
+      ? `Hotels and attractions: ${travelError}`
+      : null,
+  ].filter((message): message is string => Boolean(message));
 
   return (
-    <div className="max-w-6xl mx-auto bg-gray-50 min-h-screen">
-      <div></div>
-      <nav className="bg-white border-b shadow-sm">
-        <div className="w-fit mx-auto flex">
-          {tabs.map((tab) => (
+    <main className="max-w-6xl mx-auto bg-gray-50 min-h-screen">
+      <div className="flex items-center justify-between gap-4 p-6">
+        <h1 className="text-2xl font-bold text-gray-900">Your travel options</h1>
+        <button
+          type="button"
+          className="rounded-md border border-teal-700 px-4 py-2 text-teal-800 hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-600"
+          onClick={() => navigate("/")}
+        >
+          Edit search
+        </button>
+      </div>
+
+      {failures.length > 0 && (
+        <div
+          className="mx-6 mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950"
+          role="alert"
+        >
+          <p className="font-semibold">Some results could not be loaded.</p>
+          <ul className="mt-1 list-disc pl-5 text-sm">
+            {failures.map((failure) => (
+              <li key={failure}>{failure}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <nav className="bg-white border-b shadow-sm" aria-label="Travel results">
+        <div className="w-fit mx-auto flex" role="tablist">
+          {tabs.map((tab, index) => (
             <button
+              id={`tab-${tab.id}`}
               key={tab.id}
-              className={`py-4 px-6 font-medium text-lg transition-colors relative ${
+              type="button"
+              className={`py-4 px-6 font-medium text-lg transition-colors relative focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-600 ${
                 activeTab === tab.id
-                  ? `text-${tab.activeColor}`
+                  ? tab.activeClassName
                   : "text-gray-500 hover:text-gray-700"
               }`}
               onClick={() => setActiveTab(tab.id)}
+              onKeyDown={(event) => handleTabKeyDown(event, index)}
               role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`panel-${tab.id}`}
+              tabIndex={activeTab === tab.id ? 0 : -1}
             >
-              <div className="flex items-center cursor-pointer">
+              <span className="flex items-center cursor-pointer">
                 <svg
                   className="w-5 h-5 mr-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
                 >
                   {tab.icon}
                 </svg>
                 {tab.label}
-              </div>
+              </span>
               {activeTab === tab.id && (
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-1 bg-${tab.indicatorColor}`}
-                ></div>
+                <span
+                  className={`absolute bottom-0 left-0 w-full h-1 ${tab.indicatorClassName}`}
+                  aria-hidden="true"
+                />
               )}
             </button>
           ))}
         </div>
       </nav>
-      <div className="bg-white shadow-sm rounded-lg m-6">
-        {activeTab === "hotels" && <HotelsList hotels={hotels} />}
-        {activeTab === "flights" && <FlightsList flights={flights} />}
-        {activeTab === "attractions" && (
-          <AttractionsList attractions={attractions} />
+
+      <section
+        id={`panel-${activeTab}`}
+        aria-labelledby={`tab-${activeTab}`}
+        role="tabpanel"
+        tabIndex={0}
+        className="bg-white shadow-sm rounded-lg m-6"
+      >
+        {activeTab === "flights" && (
+          <AsyncResult
+            status={flightsStatus}
+            error={flightsError}
+            label="Flights"
+          >
+            <FlightsList flights={flights} />
+          </AsyncResult>
         )}
-      </div>
-    </div>
+        {activeTab === "hotels" && (
+          <AsyncResult status={travelStatus} error={travelError} label="Hotels">
+            <HotelsList hotels={hotels} />
+          </AsyncResult>
+        )}
+        {activeTab === "attractions" && (
+          <AsyncResult
+            status={travelStatus}
+            error={travelError}
+            label="Attractions"
+          >
+            <AttractionsList attractions={attractions} />
+          </AsyncResult>
+        )}
+      </section>
+    </main>
   );
 };
 

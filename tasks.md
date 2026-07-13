@@ -39,15 +39,15 @@ This checklist mirrors the phased development plan. Check items only after the c
 
 ## PR 4 — Result and error states (`fix/result-error-states`)
 
-- [ ] Stop the form loader after success, rejection, or validation failure.
-- [ ] Validate that both cities are selected.
-- [ ] Validate that the end date is not before the start date.
-- [ ] Show travel-suggestion request errors in the UI.
-- [ ] Show flight request errors in the UI.
-- [ ] Distinguish loading, empty, failed, and successful result states.
-- [ ] Support partial results when one service fails.
-- [ ] Prevent premature navigation away from the results page.
-- [ ] Verify keyboard and screen-reader behavior for tabs and errors.
+- [x] Stop the form loader after success, rejection, or validation failure.
+- [x] Validate that both cities are selected.
+- [x] Validate that the end date is not before the start date.
+- [x] Show travel-suggestion request errors in the UI.
+- [x] Show flight request errors in the UI.
+- [x] Distinguish loading, empty, failed, and successful result states.
+- [x] Support partial results when one service fails.
+- [x] Prevent premature navigation away from the results page.
+- [x] Verify keyboard and screen-reader behavior for tabs and errors.
 
 ## PR 5 — Production readiness (`chore/production-readiness`)
 
