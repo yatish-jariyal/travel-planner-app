@@ -39,24 +39,32 @@ const initialState: TravelState = {
   error: null,
 };
 
-export const fetchTravelInfo = createAsyncThunk(
+interface FetchTravelInfoArguments {
+  destinationCity: string;
+  startDate: string;
+  endDate: string;
+}
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error
+    ? error.message
+    : "Unable to load hotels and attractions.";
+
+export const fetchTravelInfo = createAsyncThunk<
+  TravelDataResponse,
+  FetchTravelInfoArguments,
+  { rejectValue: string }
+>(
   "travel/fetchTravelInfo",
-  async (data: {
-    destinationCity: string;
-    startDate: string;
-    endDate: string;
-  }) => {
+  async (data, { rejectWithValue }) => {
     try {
-      const response = await getTravelInfoFromAI(
+      return await getTravelInfoFromAI(
         data.destinationCity,
         data.startDate,
         data.endDate
       );
-      console.log(response);
-      return response;
     } catch (error) {
-      console.error(error);
-      throw error;
+      return rejectWithValue(getErrorMessage(error));
     }
   }
 );
@@ -79,14 +87,16 @@ const travelSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchTravelInfo.fulfilled, (state, action) => {
-        console.log("in redux", action.payload);
         state.status = "succeeded";
-        state.hotels = action?.payload.hotels || [];
-        state.attractions = action?.payload.attractions || [];
+        state.hotels = action.payload.hotels;
+        state.attractions = action.payload.attractions;
       })
       .addCase(fetchTravelInfo.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message || "Something went wrong";
+        state.error =
+          action.payload ??
+          action.error.message ??
+          "Unable to load hotels and attractions.";
       });
   },
 });

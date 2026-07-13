@@ -25,7 +25,7 @@ A React and TypeScript travel-planning application that searches for flights and
 
 ### Prerequisites
 
-- Node.js 18 or newer
+- Node.js 20 or 22+ (an LTS release is recommended)
 - npm
 - Amadeus API credentials
 - A Gemini API key
@@ -52,9 +52,11 @@ A React and TypeScript travel-planning application that searches for flights and
    VITE_CLIENT_ID=your_amadeus_client_id
    VITE_CLIENT_SECRET=your_amadeus_client_secret
    VITE_GEMINI_API_KEY=your_gemini_api_key
+   VITE_GOOGLE_SEARCH_API_KEY=your_google_search_api_key
+   VITE_GOOGLE_SEARCH_ENGINE_ID=your_search_engine_id
    ```
 
-   Do not commit `.env`. A safer credential architecture and a checked-in `.env.example` are planned in the roadmap.
+   The two Google Search variables are optional. When they are absent or an image request fails, the application keeps the attraction data returned by Gemini. Do not commit `.env`. These client-side variables are not secret; a safer credential architecture and a checked-in `.env.example` are planned in the roadmap.
 
 4. Start the development server:
 
@@ -71,6 +73,7 @@ A React and TypeScript travel-planning application that searches for flights and
 | `npm run dev` | Start the Vite development server. |
 | `npm run build` | Type-check and create a production build. |
 | `npm run lint` | Run ESLint. |
+| `npm test` | Run the automated test suite once. |
 | `npm run preview` | Preview the production build locally. |
 
 ## Project structure

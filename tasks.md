@@ -16,15 +16,15 @@ This checklist mirrors the phased development plan. Check items only after the c
 
 ## PR 2 — Travel-data reliability (`fix/travel-data-parsing`)
 
-- [ ] Extract Gemini response cleanup and parsing into a testable function.
-- [ ] Support plain JSON and Markdown-fenced JSON safely.
-- [ ] Validate `hotels` and `attractions` before using them.
-- [ ] Preserve valid travel data when attraction image lookup fails.
-- [ ] Handle an empty Google image-search result.
-- [ ] Move image-search configuration out of hard-coded source values.
-- [ ] Propagate useful rejected-thunk errors.
-- [ ] Add parser and fallback tests.
-- [ ] Verify lint, build, and tests.
+- [x] Extract Gemini response cleanup and parsing into a testable function.
+- [x] Support plain JSON and Markdown-fenced JSON safely.
+- [x] Validate `hotels` and `attractions` before using them.
+- [x] Preserve valid travel data when attraction image lookup fails.
+- [x] Handle an empty Google image-search result.
+- [x] Move image-search configuration out of hard-coded source values.
+- [x] Propagate useful rejected-thunk errors.
+- [x] Add parser and fallback tests.
+- [x] Verify lint, build, and tests.
 
 ## PR 3 — Environment and credential setup (`docs/env-setup`)
 
