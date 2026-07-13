@@ -87,6 +87,23 @@ Turn the current prototype into a reliable, secure, maintainable travel-planning
 
 **Done when:** Automated checks pass, the main journey is covered, and remaining production limitations are documented.
 
+### Phase 6 — Establish the backend security boundary
+
+**Branch:** `feat/backend-api-proxy`
+
+**Outcome:** No secret-bearing provider request or credential is delivered to the browser.
+
+- Add a portable Node 22/Express API in the repository.
+- Expose validated airport, flight-search, and travel-information routes.
+- Move Amadeus authentication, Gemini generation, and optional image search server-side.
+- Use the current Google Gen AI SDK and a supported stable model.
+- Add rate limits, payload limits, provider timeouts, controlled CORS, security headers, and sanitized logging.
+- Replace frontend provider calls with calls to the project API.
+- Remove legacy browser secrets, SDKs, and token cookies.
+- Document secret-manager deployment and provider-side rotation evidence.
+
+**Done when:** Automated checks and bundle-secret scans pass, the browser contacts only project-owned API routes, and provider-side credential actions are recorded without secret values.
+
 ## Pull-request standard
 
 Each pull request should include:

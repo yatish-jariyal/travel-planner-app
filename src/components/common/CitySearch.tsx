@@ -1,6 +1,7 @@
 import { useState, useEffect, useId, useRef } from "react";
 import type { ChangeEvent } from "react";
 import { getAirport } from "../../utils/getFlights";
+import { getApiErrorMessage } from "../../utils/apiClient";
 import { LocationData } from "../../utils/types";
 
 interface CitySearchProps {
@@ -37,18 +38,11 @@ const CitySearch = ({
     setError(null);
 
     try {
-      const response = await getAirport(searchQuery);
-      if (!response) {
-        throw new Error("Failed to fetch city data");
-      }
-
-      const data = response.data.data;
-      setLocations(data);
+      const locations = await getAirport(searchQuery);
+      setLocations(locations);
       setShowDropdown(true);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred"
-      );
+    } catch (error) {
+      setError(getApiErrorMessage(error, "Unable to search airports."));
       setLocations([]);
     } finally {
       setIsLoading(false);

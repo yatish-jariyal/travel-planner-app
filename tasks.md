@@ -60,3 +60,22 @@ This checklist mirrors the phased development plan. Check items only after the c
 - [x] Review responsive behavior and accessibility.
 - [x] Document API limits and deployment constraints.
 - [x] Complete a final security review before production deployment.
+
+## PR 6 — Backend API and secret boundary (`feat/backend-api-proxy`)
+
+- [x] Add a Node 22/Express backend owned by the project.
+- [x] Move Amadeus token exchange and provider requests to the backend.
+- [x] Cache Amadeus tokens server-side using provider expiry.
+- [x] Move Gemini generation to the current server-side Google Gen AI SDK.
+- [x] Replace the retired Gemini 1.5 model with stable Gemini 3.5 Flash.
+- [x] Move optional Google image search to the backend.
+- [x] Remove provider secrets, provider SDKs, and token cookies from browser code.
+- [x] Validate inputs and reject unexpected fields.
+- [x] Add payload limits, rate limits, timeouts, controlled CORS, and security headers.
+- [x] Add sanitized structured errors and logs.
+- [x] Add backend route, configuration, and parser tests.
+- [x] Document local migration, deployment, and credential evidence.
+- [ ] Confirm the exposed Google API key was deleted in Google Cloud.
+- [ ] Classify and safely handle the unidentified active service-account key.
+- [ ] Configure replacement credentials in the selected deployment secret manager.
+- [ ] Complete live-provider and browser-network verification with replacement credentials.

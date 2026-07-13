@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getTravelInfoFromAI } from "../utils/getAPI";
+import { getApiErrorMessage } from "../utils/apiClient";
 import type { RootState } from "./store";
 
 export interface Hotel {
@@ -46,11 +47,6 @@ interface FetchTravelInfoArguments {
   endDate: string;
 }
 
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error
-    ? error.message
-    : "Unable to load hotels and attractions.";
-
 export const fetchTravelInfo = createAsyncThunk<
   TravelDataResponse,
   FetchTravelInfoArguments,
@@ -65,7 +61,9 @@ export const fetchTravelInfo = createAsyncThunk<
         data.endDate
       );
     } catch (error) {
-      return rejectWithValue(getErrorMessage(error));
+      return rejectWithValue(
+        getApiErrorMessage(error, "Unable to load hotels and attractions.")
+      );
     }
   }
 );

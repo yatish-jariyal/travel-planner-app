@@ -1,10 +1,31 @@
 # Production Readiness
 
-The application now has automated checks, explicit request states, runtime configuration validation, and a clean dependency audit. It is still a browser-only prototype and should not be deployed with private provider credentials until the backend work below is complete.
+The repository now has a project-owned API boundary. Amadeus token exchange, Gemini generation, and optional Google image search execute only in the Node backend; the React bundle contains no provider credentials.
+
+## Implemented controls
+
+- Strict Zod schemas reject invalid and unexpected input fields.
+- JSON request bodies are limited to 16 KB.
+- API requests are rate-limited and return standard rate-limit headers.
+- Provider clients have bounded timeouts.
+- Amadeus access tokens are cached in server memory using provider expiry.
+- CORS allows only configured frontend origins.
+- Helmet applies baseline HTTP security headers.
+- Provider errors are sanitized and structured logs omit secrets and response bodies.
+- Gemini uses the current `@google/genai` server SDK and stable `gemini-3.5-flash` model.
+- CI checks frontend and backend lint, tests, builds, and dependency audit on Node 22.
+
+## Remaining release blockers
+
+- Confirm deletion of the Google API key historically committed to Git.
+- Classify and safely disable/delete the unidentified active user-managed service-account key, if applicable.
+- Store replacement credentials in the selected platform's secret manager.
+- Select a deployment platform and configure HTTPS, routing, monitoring, budgets, rollback, and exact production CORS origins.
+- Decide whether production scale requires a shared rate-limit store.
+
+Track provider-side actions in [Credential Rotation Record](CREDENTIAL_ROTATION.md) and deployment requirements in [Backend Deployment](BACKEND_DEPLOYMENT.md).
 
 ## Release gates
-
-Every pull request and push to `main` runs the following GitHub Actions checks on Node 22:
 
 ```bash
 npm ci
@@ -14,56 +35,31 @@ npm run build
 npm audit --audit-level=high
 ```
 
-A production release should require all checks to pass and should be built from the committed lockfile.
+Also scan built browser assets:
 
-## Blocking security work
+```bash
+rg 'VITE_(CLIENT_SECRET|GEMINI_API_KEY|GOOGLE_SEARCH_API_KEY)' src dist .env.example
+rg 'AIza[0-9A-Za-z_-]+' src dist
+```
 
-- Confirm that the Google API key previously committed to Git history has been revoked or rotated.
-- Move Amadeus token exchange, Gemini requests, and Google image search behind a project-owned backend or serverless API.
-- Store provider credentials in the deployment platform's secret manager without a `VITE_` prefix.
-- Apply authentication or abuse protection, rate limits, request size limits, timeouts, and structured server-side logging.
-- Restrict provider credentials to the smallest required API and environment.
+Both scans must return no matches.
 
-The current `.env` workflow protects local values from an ordinary Git commit but does not keep them out of browser bundles. See [Environment and Credential Setup](ENVIRONMENT_SETUP.md) for the target architecture.
+## Browser verification
 
-## External API usage and quotas
+Submit a trip with browser developer tools open. Browser traffic may call only the project's `/api/*` routes. It must not directly contact:
 
-One submitted trip can currently produce:
+- `test.api.amadeus.com`
+- `generativelanguage.googleapis.com`
+- `www.googleapis.com/customsearch`
 
-- Amadeus airport searches while the user types, after a 500 ms debounce.
-- One Amadeus token exchange when no fresh cached token exists.
-- One Amadeus flight-offer request.
-- One Gemini generation request.
-- Up to one Google image-search request per returned attraction when optional image enrichment is configured.
+Test valid results, provider timeout, missing optional image configuration, invalid input, empty results, and one-provider failure with partial results.
 
-Provider quotas, rate limits, models, and pricing can change. Before each deployment:
+## External API usage
 
-1. Review the active quotas and billing limits in each provider account.
-2. Set conservative provider-side budget and quota alerts.
-3. Add backend rate limiting and cache airport, token, and image-search results where permitted.
-4. Cap generated hotel and attraction counts and enforce response-size limits server-side.
-5. Decide how partial provider outages should degrade the experience.
+One submitted trip can produce one flight request and one Gemini request. Airport searches run after a 500 ms debounce. The server reuses an unexpired Amadeus token. Optional image enrichment can make one Google search per returned attraction.
 
-The application must not promise live hotel price, availability, attraction fee, or rating accuracy. Gemini output is generated guidance, not a booking inventory source.
-
-## Hosting constraints
-
-- Configure the host to rewrite unknown application paths such as `/travel` to `index.html` for React Router.
-- Build with Node 22 and `npm ci`.
-- Serve the site over HTTPS.
-- Configure a restrictive Content Security Policy that allows only the required API and image origins after the backend design is finalized.
-- Keep source maps private if they expose implementation details that should not be public.
-- Validate CORS on the future backend and allow only approved application origins.
-- Use separate test and production provider projects; do not point production at Amadeus test endpoints.
-
-## Operational checklist
-
-- Define uptime and error-rate monitoring for the frontend and future API.
-- Log provider failures without logging tokens, keys, prompts containing sensitive data, or full provider responses.
-- Add a privacy notice before collecting personal trip information or analytics.
-- Test keyboard navigation, mobile layouts, slow networks, empty results, and partial outages before release.
-- Document rollback steps and retain the previous known-good build.
+Generated hotel prices, availability, attraction fees, and ratings are guidance rather than live booking inventory. Review provider quotas, pricing, billing alerts, and model lifecycle before every release.
 
 ## Current decision
 
-The repository is suitable for continued development and controlled local testing. Production deployment remains blocked on provider-side key rotation confirmation and moving private credential operations out of the browser.
+The code architecture is appropriate for controlled backend deployment. A public production launch remains blocked on the provider-side credential actions and hosting controls listed above.

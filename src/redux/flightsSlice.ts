@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Flight, FlightArguments } from "./IFlights";
 import { getData } from "../utils/getFlights";
+import { getApiErrorMessage } from "../utils/apiClient";
 import type { RootState } from "./store";
 
 interface FlightsState {
@@ -15,9 +16,6 @@ const initialState: FlightsState = {
   error: null,
 };
 
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : "Unable to load flights.";
-
 export const fetchFlightsInfo = createAsyncThunk<
   Flight[],
   FlightArguments,
@@ -28,7 +26,7 @@ export const fetchFlightsInfo = createAsyncThunk<
     try {
       return await getData(body);
     } catch (error) {
-      return rejectWithValue(getErrorMessage(error));
+      return rejectWithValue(getApiErrorMessage(error, "Unable to load flights."));
     }
   }
 );
