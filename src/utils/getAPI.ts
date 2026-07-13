@@ -5,6 +5,7 @@ import type {
   Hotel,
   TravelDataResponse,
 } from "../redux/travelSlice";
+import { requireEnvironmentVariable } from "./env";
 
 const NOT_AVAILABLE = "Not available";
 
@@ -173,11 +174,10 @@ export const getTravelInfoFromAI = async (
   startDate: string,
   endDate: string
 ): Promise<TravelDataResponse> => {
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
-
-  if (!geminiApiKey) {
-    throw new Error("The Gemini API key is not configured.");
-  }
+  const geminiApiKey = requireEnvironmentVariable(
+    "VITE_GEMINI_API_KEY",
+    import.meta.env.VITE_GEMINI_API_KEY
+  );
 
   const genAI = new GoogleGenerativeAI(geminiApiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

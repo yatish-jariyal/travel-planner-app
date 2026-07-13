@@ -1,38 +1,68 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { requireEnvironmentVariable } from "./env";
 
 const TOKEN_EXPIRY = 30000;
 
-export const fetchToken = async (): Promise<string | undefined> => {
-  try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_TOKEN_URL}`,
-      {
-        grant_type: "client_credentials",
-        client_id: import.meta.env.VITE_CLIENT_ID,
-        client_secret: import.meta.env.VITE_CLIENT_SECRET,
-      },
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    const token = response.data.access_token;
+interface AmadeusEnvironment {
+  VITE_TOKEN_URL?: string;
+  VITE_CLIENT_ID?: string;
+  VITE_CLIENT_SECRET?: string;
+}
 
-    if (token) {
-      Cookies.set("token", token, { expires: 1 / 48 });
-      Cookies.set("token_timestamp", Date.now().toString(), {
-        expires: 1 / 48,
-      });
-      return token;
+export interface AmadeusConfig {
+  tokenUrl: string;
+  clientId: string;
+  clientSecret: string;
+}
+
+export const getAmadeusConfig = (
+  environment: AmadeusEnvironment
+): AmadeusConfig => ({
+  tokenUrl: requireEnvironmentVariable(
+    "VITE_TOKEN_URL",
+    environment.VITE_TOKEN_URL
+  ),
+  clientId: requireEnvironmentVariable(
+    "VITE_CLIENT_ID",
+    environment.VITE_CLIENT_ID
+  ),
+  clientSecret: requireEnvironmentVariable(
+    "VITE_CLIENT_SECRET",
+    environment.VITE_CLIENT_SECRET
+  ),
+});
+
+export const fetchToken = async (): Promise<string> => {
+  const config = getAmadeusConfig(import.meta.env);
+  const response = await axios.post(
+    config.tokenUrl,
+    {
+      grant_type: "client_credentials",
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
+    },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     }
-  } catch (error) {
-    console.log("Error", error);
+  );
+  const token = response.data.access_token;
+
+  if (typeof token !== "string" || !token) {
+    throw new Error("The Amadeus token endpoint returned no access token.");
   }
+
+  Cookies.set("token", token, { expires: 1 / 48 });
+  Cookies.set("token_timestamp", Date.now().toString(), {
+    expires: 1 / 48,
+  });
+
+  return token;
 };
 
-export const getToken = async (): Promise<string | undefined> => {
+export const getToken = async (): Promise<string> => {
   const token = Cookies.get("token");
   const tokenTimestamp = Cookies.get("token_timestamp");
 
@@ -43,5 +73,6 @@ export const getToken = async (): Promise<string | undefined> => {
       return token;
     }
   }
-  return await fetchToken();
+
+  return fetchToken();
 };

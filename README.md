@@ -25,7 +25,7 @@ A React and TypeScript travel-planning application that searches for flights and
 
 ### Prerequisites
 
-- Node.js 20 or 22+ (an LTS release is recommended)
+- Node.js 22 (pinned in `.nvmrc`)
 - npm
 - Amadeus API credentials
 - A Gemini API key
@@ -39,24 +39,20 @@ A React and TypeScript travel-planning application that searches for flights and
    cd travel-planner-app
    ```
 
-2. Install dependencies:
+2. Select the project Node version and install dependencies:
 
    ```bash
-   npm install
+   nvm use
+   npm ci
    ```
 
-3. Create a local `.env` file with the required credentials. The current application expects these variables:
+3. Copy the safe environment template and replace its placeholders:
 
-   ```dotenv
-   VITE_TOKEN_URL=https://test.api.amadeus.com/v1/security/oauth2/token
-   VITE_CLIENT_ID=your_amadeus_client_id
-   VITE_CLIENT_SECRET=your_amadeus_client_secret
-   VITE_GEMINI_API_KEY=your_gemini_api_key
-   VITE_GOOGLE_SEARCH_API_KEY=your_google_search_api_key
-   VITE_GOOGLE_SEARCH_ENGINE_ID=your_search_engine_id
+   ```bash
+   cp .env.example .env
    ```
 
-   The two Google Search variables are optional. When they are absent or an image request fails, the application keeps the attraction data returned by Gemini. Do not commit `.env`. These client-side variables are not secret; a safer credential architecture and a checked-in `.env.example` are planned in the roadmap.
+   See the [environment setup guide](docs/ENVIRONMENT_SETUP.md) for required variables, optional image search, and important client-side security limitations. Never commit `.env`.
 
 4. Start the development server:
 
@@ -93,6 +89,7 @@ src/
 - [Development plan](plan.md) — phased roadmap and success criteria.
 - [Task tracker](tasks.md) — implementation checklist grouped by pull request.
 - [Codebase review](docs/CODEBASE_REVIEW.md) — current architecture, risks, and recommendations.
+- [Environment setup](docs/ENVIRONMENT_SETUP.md) — variables, credential safety, and production architecture.
 
 ## Contribution workflow
 
