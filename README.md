@@ -1,27 +1,38 @@
 # Travel Planner App
 
-A web-based Travel Planner application that helps users search for airports, create and manage itineraries, and generate travel suggestions using modern web technologies.
+A React and TypeScript travel-planning application that searches for flights and uses generative AI to suggest hotels and attractions for a selected destination.
 
-## Key Features
+## Features
 
-- **Airport Search:** Look up airports by code or name using the `@nwpr/airport-codes` database.
-- **Itinerary Management:** Add, edit, and remove destinations to build a complete travel plan.
-- **Interactive Tabs:** Navigate between different parts of your trip with the `TravelTabs` component.
-- **State Management:** Leverage Redux Toolkit (`@reduxjs/toolkit`) for predictable and centralized application state.
-- **AI-Powered Suggestions:** Integrate with Google Generative AI (`@google/generative-ai`) to get personalized travel recommendations.
-- **Utilities:** Shared helper functions in `src/utils/helper.ts` for common tasks like formatting dates and handling API requests.
+- Search for origin and destination airports through the Amadeus test API.
+- Search for flight offers for a selected departure date.
+- Generate hotel and attraction suggestions for the trip dates with Gemini.
+- Browse flights, hotels, and attractions in a tabbed results view.
+- Keep request results and loading state in Redux Toolkit.
 
-## Tech Stack
+## Tech stack
 
-- **React** + **TypeScript**
-- **Vite** for fast development builds and HMR
-- **Tailwind CSS** for utility-first styling
-- **Redux Toolkit** for state management
-- **Axios** for HTTP requests
+- React 19 and TypeScript
+- Vite
+- Tailwind CSS
+- Redux Toolkit and React Redux
+- React Router
+- Axios
+- Google Generative AI SDK
+- Amadeus test APIs
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 18 or newer
+- npm
+- Amadeus API credentials
+- A Gemini API key
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository and enter the project directory:
 
    ```bash
    git clone https://github.com/yatish-jariyal/travel-planner-app.git
@@ -34,38 +45,65 @@ A web-based Travel Planner application that helps users search for airports, cre
    npm install
    ```
 
-### Available Scripts
+3. Create a local `.env` file with the required credentials. The current application expects these variables:
 
-- **`npm run dev`**: Start the development server
-- **`npm run build`**: Build for production (output to `dist/`)
-- **`npm run preview`**: Preview the production build
-- **`npm run lint`**: Run ESLint checks
+   ```dotenv
+   VITE_TOKEN_URL=https://test.api.amadeus.com/v1/security/oauth2/token
+   VITE_CLIENT_ID=your_amadeus_client_id
+   VITE_CLIENT_SECRET=your_amadeus_client_secret
+   VITE_GEMINI_API_KEY=your_gemini_api_key
+   ```
 
-### Running the App
+   Do not commit `.env`. A safer credential architecture and a checked-in `.env.example` are planned in the roadmap.
 
-```bash
-npm run dev
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open `http://localhost:5173`.
+
+## Available scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the Vite development server. |
+| `npm run build` | Type-check and create a production build. |
+| `npm run lint` | Run ESLint. |
+| `npm run preview` | Preview the production build locally. |
+
+## Project structure
+
+```text
+src/
+├── components/       # Form, navigation, flight, hotel, and attraction UI
+├── redux/            # Store, async thunks, slices, and data interfaces
+├── utils/            # Amadeus, Gemini, token, and formatting helpers
+├── App.tsx            # Home page composition
+├── index.css          # Global styles
+└── main.tsx           # App entry point, provider, and routes
 ```
 
-Open your browser and navigate to `http://localhost:5173`.
+## Project documentation
 
-## Project Structure
+- [Development plan](plan.md) — phased roadmap and success criteria.
+- [Task tracker](tasks.md) — implementation checklist grouped by pull request.
+- [Codebase review](docs/CODEBASE_REVIEW.md) — current architecture, risks, and recommendations.
 
-```
-travel-planner-app/
-├── public/             # Static assets
-├── src/
-│   ├── components/     # Reusable UI components
-│   │   └── common/
-│   │       └── TravelTabs.tsx  # Tab navigation for itinerary
-│   ├── redux/
-│   │   └── store.ts    # Redux store configuration
-│   ├── utils/
-│   │   └── helper.ts   # Shared helper functions
-│   └── main.tsx        # Application entry point
-├── .eslintrc.js        # Linting rules
-├── tsconfig.json       # TypeScript configuration
-├── tailwind.config.js  # Tailwind CSS configuration
-├── vite.config.ts      # Vite configuration
-└── package.json        # Project metadata and scripts
-```
+## Contribution workflow
+
+Keep each pull request focused on one concern:
+
+1. Update local `main`: `git checkout main && git pull origin main`.
+2. Create a descriptive branch, such as `fix/travel-data-parsing`.
+3. Make and verify only the changes needed for that task.
+4. Review `git diff`, then commit with a clear message.
+5. Push the branch and open a pull request against `main`.
+6. Merge only after checks and review are complete, then update local `main` again.
+
+Do not commit API keys, `.env`, build output, or unrelated changes.
+
+## Current status
+
+This project is under active development. The codebase review identifies reliability, security, error-state, and test-coverage work that should be completed before production deployment.
