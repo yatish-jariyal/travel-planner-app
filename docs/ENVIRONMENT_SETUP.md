@@ -1,8 +1,6 @@
 # Environment and Credential Setup
 
-## Quick setup
-
-Use Node 22 and create a local environment file from the committed template:
+## Local setup
 
 ```bash
 nvm use
@@ -10,63 +8,54 @@ npm ci
 cp .env.example .env
 ```
 
-Replace every required placeholder in `.env`, then start the application with `npm run dev`. Vite reads `.env` when the development server starts, so restart the server after changing a variable.
+Replace the placeholders, then run `npm run dev`. The command starts the API on port 3000 and Vite on port 5173.
 
 ## Variables
 
-| Variable | Requirement | Purpose |
+| Variable | Requirement | Visibility and purpose |
 | --- | --- | --- |
-| `VITE_AMADEUS_API_BASE_URL` | Required for flights | Amadeus API base URL. `.env.example` uses the test environment. |
-| `VITE_TOKEN_URL` | Required for flights | Amadeus OAuth token endpoint. The test endpoint is included in `.env.example`. |
-| `VITE_CLIENT_ID` | Required for flights | Amadeus application client ID. |
-| `VITE_CLIENT_SECRET` | Required for flights | Amadeus application client secret. It is exposed by the current browser-only architecture. |
-| `VITE_GEMINI_API_KEY` | Required for hotels and attractions | Authenticates Gemini travel-suggestion requests. |
-| `VITE_GOOGLE_SEARCH_API_KEY` | Optional pair | Enables Google Custom Search image enrichment when paired with the search-engine ID. |
-| `VITE_GOOGLE_SEARCH_ENGINE_ID` | Optional pair | Identifies the Google Programmable Search Engine used for attraction images. |
+| `VITE_API_BASE_URL` | Optional | Public browser configuration. Leave blank for same-origin requests and local Vite proxying. |
+| `PORT` | Optional | Backend port; defaults to `3000`. |
+| `FRONTEND_ORIGIN` | Required for cross-origin deployment | Comma-separated browser origins allowed by backend CORS. |
+| `PROVIDER_TIMEOUT_MS` | Optional | Outbound provider timeout; defaults to 15 seconds. |
+| `AMADEUS_API_BASE_URL` | Required for flights | Backend Amadeus API base URL. |
+| `AMADEUS_TOKEN_URL` | Required for flights | Backend OAuth token URL. |
+| `AMADEUS_CLIENT_ID` | Required for flights | Backend-only Amadeus client identifier. |
+| `AMADEUS_CLIENT_SECRET` | Required for flights | Backend-only Amadeus secret. |
+| `GEMINI_API_KEY` | Required for suggestions | Backend-only restricted Gemini credential. |
+| `GEMINI_MODEL` | Optional | Defaults to the stable `gemini-3.5-flash` model. |
+| `GOOGLE_SEARCH_API_KEY` | Optional pair | Backend-only Custom Search key. |
+| `GOOGLE_SEARCH_ENGINE_ID` | Optional pair | Search-engine identifier; configure with the search key or omit both. |
 
-If the Google Search pair is missing or an image request fails, the application keeps the attraction information and any image URL returned by Gemini.
+Provider secrets are checked when their feature is requested, so `/api/health` remains available even when a provider is intentionally unconfigured.
 
-Missing Amadeus or Gemini configuration now produces an error that names the absent variable instead of sending a request with `undefined` credentials.
+## Migrating an existing local `.env`
 
-## What `.env` protects—and what it does not
+Rename the old browser variables:
 
-The repository ignores `.env`, which prevents an accidental Git commit during normal development. That does not make `VITE_*` values private.
+| Remove | Replace with |
+| --- | --- |
+| `VITE_AMADEUS_API_BASE_URL` | `AMADEUS_API_BASE_URL` |
+| `VITE_TOKEN_URL` | `AMADEUS_TOKEN_URL` |
+| `VITE_CLIENT_ID` | `AMADEUS_CLIENT_ID` |
+| `VITE_CLIENT_SECRET` | `AMADEUS_CLIENT_SECRET` |
+| `VITE_GEMINI_API_KEY` | `GEMINI_API_KEY` |
+| `VITE_GOOGLE_SEARCH_API_KEY` | `GOOGLE_SEARCH_API_KEY` |
+| `VITE_GOOGLE_SEARCH_ENGINE_ID` | `GOOGLE_SEARCH_ENGINE_ID` |
 
-Vite replaces `VITE_*` references during the build and includes their values in browser-delivered JavaScript. Anyone who can load the application can inspect those values. Therefore:
+Do not copy an historically exposed Google key into the new server variable. Create a replacement restricted credential and revoke the old one using the [credential rotation procedure](CREDENTIAL_ROTATION.md).
 
-- Never treat a `VITE_*` value as a production secret.
-- Never commit a populated `.env` file.
-- Restrict development keys by API, quota, referrer, and environment where the provider supports it.
-- Revoke and rotate any key that has appeared in source code or Git history.
+## Security boundary
 
-The Google API key previously embedded in `src/utils/getAPI.ts` must be considered exposed even though it has been removed from the latest source. Git history still contains the old value.
+Only `VITE_API_BASE_URL` may appear in frontend code. Vite compiles every `VITE_*` value into browser assets, so no secret may use that prefix.
 
-## Recommended production architecture
+The backend now:
 
-Before deployment, introduce a backend or serverless API owned by this project:
+- exchanges Amadeus credentials and caches the access token in server memory;
+- calls Gemini through the current server-side Google Gen AI SDK;
+- performs optional image search without returning the key;
+- validates and rejects unexpected request fields;
+- enforces payload limits, rate limits, timeouts, controlled CORS, and security headers;
+- returns sanitized errors and never logs credential values or provider responses.
 
-```text
-Browser -> Travel Planner API -> Amadeus / Gemini / Google APIs
-```
-
-The browser should send trip inputs to project endpoints such as `/api/flights` and `/api/travel`. The server should:
-
-- Read private credentials from its hosting platform's secret store.
-- Exchange Amadeus client credentials for tokens server-side.
-- Call Gemini and Google services without returning credentials to the browser.
-- Validate inputs and return only the data the UI needs.
-- Apply rate limits, timeouts, logging, and provider-specific error handling.
-
-After that migration, private credentials should lose the `VITE_` prefix and exist only in server configuration. The checked-in `.env.example` should continue to contain placeholders, never live values.
-
-## Credential incident checklist
-
-For the previously committed Google key:
-
-1. Revoke or rotate it in the provider account.
-2. Review recent usage and quota activity.
-3. Restrict the replacement key to only the required API and environment.
-4. Do not paste the replacement into tracked files.
-5. Use a server-side secret store before production deployment.
-
-Rewriting Git history is optional after revocation and requires coordination with every clone. History rewriting is not a substitute for revoking an exposed credential.
+For production, store values in the hosting platform's secret manager. Do not upload `.env` or create a downloadable service-account JSON key merely to deploy on a Google-managed runtime.

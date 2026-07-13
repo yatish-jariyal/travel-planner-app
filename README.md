@@ -1,25 +1,33 @@
 # Travel Planner App
 
-A React and TypeScript travel-planning application that searches for flights and uses generative AI to suggest hotels and attractions for a selected destination.
+A full-stack React and Node travel-planning application that searches Amadeus flight data and uses Gemini to suggest hotels and attractions. Provider credentials stay in the project-owned API and are never compiled into the browser bundle.
 
 ## Features
 
 - Search for origin and destination airports through the Amadeus test API.
 - Search for flight offers for a selected departure date.
-- Generate hotel and attraction suggestions for the trip dates with Gemini.
-- Browse flights, hotels, and attractions in a tabbed results view.
-- Keep request results and loading state in Redux Toolkit.
+- Generate hotel and attraction suggestions with Gemini 3.5 Flash.
+- Optionally enrich attraction images through Google Custom Search.
+- Preserve partial results when one provider fails.
+- Validate browser requests at a rate-limited backend boundary.
+
+## Architecture
+
+```text
+React browser -> /api -> Node/Express API -> Amadeus
+                                      ├──> Gemini
+                                      └──> Google Custom Search (optional)
+```
+
+The browser receives only `VITE_API_BASE_URL`, which is a public address. Amadeus credentials and Google keys are read only by the backend.
 
 ## Tech stack
 
-- React 19 and TypeScript
-- Vite
-- Tailwind CSS
-- Redux Toolkit and React Redux
-- React Router
-- Axios
-- Google Generative AI SDK
-- Amadeus test APIs
+- React 19, TypeScript, Vite, Tailwind CSS
+- Redux Toolkit, React Redux, React Router
+- Node 22, Express 5, Zod
+- Google Gen AI SDK and Axios
+- Vitest and Supertest
 
 ## Getting started
 
@@ -28,83 +36,76 @@ A React and TypeScript travel-planning application that searches for flights and
 - Node.js 22 (pinned in `.nvmrc`)
 - npm
 - Amadeus API credentials
-- A Gemini API key
+- A restricted Gemini API key
 
 ### Installation
 
-1. Clone the repository and enter the project directory:
+```bash
+git clone https://github.com/yatish-jariyal/travel-planner-app.git
+cd travel-planner-app
+nvm use
+npm ci
+cp .env.example .env
+```
 
-   ```bash
-   git clone https://github.com/yatish-jariyal/travel-planner-app.git
-   cd travel-planner-app
-   ```
+Replace the backend placeholders in `.env`. Never commit that file. See the [environment setup guide](docs/ENVIRONMENT_SETUP.md) for the migration from the old `VITE_*` names.
 
-2. Select the project Node version and install dependencies:
+Start the API and Vite development server together:
 
-   ```bash
-   nvm use
-   npm ci
-   ```
+```bash
+npm run dev
+```
 
-3. Copy the safe environment template and replace its placeholders:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   See the [environment setup guide](docs/ENVIRONMENT_SETUP.md) for required variables, optional image search, and important client-side security limitations. Never commit `.env`.
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open `http://localhost:5173`.
+Open `http://localhost:5173`. Vite proxies `/api` to `http://localhost:3000` during development.
 
 ## Available scripts
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start the Vite development server. |
-| `npm run build` | Type-check and create a production build. |
+| `npm run dev` | Start the backend and frontend development servers. |
+| `npm run dev:server` | Start only the backend with file watching. |
+| `npm run dev:web` | Start only Vite. |
+| `npm run build` | Type-check and build the backend and frontend. |
+| `npm run start` | Start the compiled backend. |
 | `npm run lint` | Run ESLint. |
-| `npm test` | Run the automated test suite once. |
-| `npm run preview` | Preview the production build locally. |
+| `npm test` | Run frontend and backend tests once. |
+| `npm run preview` | Preview the frontend production build. |
 
 ## Project structure
 
 ```text
+server/                # Express API, validation, provider adapters, tests
 src/
-├── components/       # Form, navigation, flight, hotel, and attraction UI
-├── redux/            # Store, async thunks, slices, and data interfaces
-├── utils/            # Amadeus, Gemini, token, and formatting helpers
-├── App.tsx            # Home page composition
-├── index.css          # Global styles
-└── main.tsx           # App entry point, provider, and routes
+├── components/        # Form, navigation, and result UI
+├── redux/             # Store, async thunks, slices, and interfaces
+├── utils/             # Project API client, payloads, and formatting
+├── App.tsx
+└── main.tsx
 ```
 
-## Project documentation
+## Documentation
 
-- [Development plan](plan.md) — phased roadmap and success criteria.
-- [Task tracker](tasks.md) — implementation checklist grouped by pull request.
-- [Codebase review](docs/CODEBASE_REVIEW.md) — current architecture, risks, and recommendations.
-- [Environment setup](docs/ENVIRONMENT_SETUP.md) — variables, credential safety, and production architecture.
-- [Production readiness](docs/PRODUCTION_READINESS.md) — release gates, API usage, hosting constraints, and remaining blockers.
+- [Environment setup](docs/ENVIRONMENT_SETUP.md)
+- [Backend deployment](docs/BACKEND_DEPLOYMENT.md)
+- [Credential rotation record](docs/CREDENTIAL_ROTATION.md)
+- [Production readiness](docs/PRODUCTION_READINESS.md)
+- [Development plan](plan.md)
+- [Task tracker](tasks.md)
+- [Codebase review](docs/CODEBASE_REVIEW.md)
 
 ## Contribution workflow
 
-Keep each pull request focused on one concern:
+Keep each pull request focused, review the diff, and run:
 
-1. Update local `main`: `git checkout main && git pull origin main`.
-2. Create a descriptive branch, such as `fix/travel-data-parsing`.
-3. Make and verify only the changes needed for that task.
-4. Review `git diff`, then commit with a clear message.
-5. Push the branch and open a pull request against `main`.
-6. Merge only after checks and review are complete, then update local `main` again.
+```bash
+npm run lint
+npm test
+npm run build
+npm audit --audit-level=high
+```
 
-Do not commit API keys, `.env`, build output, or unrelated changes.
+Do not commit credentials, `.env`, generated builds, or unrelated changes.
 
 ## Current status
 
-This project is under active development. Automated checks and dependency auditing are in place, but production deployment remains blocked until private provider requests move behind a project-owned backend and the previously exposed Google credential is confirmed rotated.
+Secret-bearing provider operations have moved out of the browser. Production deployment remains blocked until the historically exposed Google API key and the unidentified active service-account key are handled and the chosen hosting environment is configured with a secret manager, HTTPS, monitoring, and an approved frontend origin.

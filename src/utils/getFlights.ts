@@ -1,44 +1,21 @@
-import axios from "axios";
-import { getAmadeusConfig, getToken } from "./getToken";
 import { Flight, FlightArguments } from "../redux/IFlights";
+import type { LocationData } from "./types";
+import { apiClient } from "./apiClient";
 
 export const getData = async (body: FlightArguments): Promise<Flight[]> => {
-  const config = getAmadeusConfig(import.meta.env);
-  const token = await getToken();
-  const response = await axios.post(
-    `${config.apiBaseUrl}/v2/shopping/flight-offers`,
-    body,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
+  const response = await apiClient.post<{ data: Flight[] }>(
+    "/api/flights/search",
+    body
   );
   return response.data.data;
 };
 
-export const getAirport = async (city: string) => {
-  const config = getAmadeusConfig(import.meta.env);
-  const token = await getToken();
-  const response = await axios.get(
-    `${config.apiBaseUrl}/v1/reference-data/locations`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      params: {
-        subType: "AIRPORT,CITY",
-        keyword: city,
-        "page[limit]": 10,
-        "page[offset]": 0,
-        sort: "analytics.travelers.score",
-        view: "FULL",
-      },
-    }
+export const getAirport = async (city: string): Promise<LocationData[]> => {
+  const response = await apiClient.get<{ data: LocationData[] }>(
+    "/api/airports",
+    { params: { keyword: city } }
   );
-  return response;
+  return response.data.data;
 };
 
 export const createFlightsPayload = ({
