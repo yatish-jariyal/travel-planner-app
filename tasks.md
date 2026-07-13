@@ -51,12 +51,12 @@ This checklist mirrors the phased development plan. Check items only after the c
 
 ## PR 5 — Production readiness (`chore/production-readiness`)
 
-- [ ] Remove development `console.log` calls.
-- [ ] Remove unused imports, dependencies, and empty markup.
-- [ ] Replace dynamic Tailwind class construction with complete class names.
-- [ ] Add typed `useAppDispatch` and `useAppSelector` hooks.
-- [ ] Add tests for the primary trip-search flow.
-- [ ] Add CI checks for lint, build, and tests.
-- [ ] Review responsive behavior and accessibility.
-- [ ] Document API limits and deployment constraints.
-- [ ] Complete a final security review before production deployment.
+- [x] Remove development `console.log` calls.
+- [x] Remove unused imports, dependencies, and empty markup.
+- [x] Replace dynamic Tailwind class construction with complete class names.
+- [x] Add typed `useAppDispatch` and `useAppSelector` hooks.
+- [x] Add tests for the primary trip-search flow.
+- [x] Add CI checks for lint, build, and tests.
+- [x] Review responsive behavior and accessibility.
+- [x] Document API limits and deployment constraints.
+- [x] Complete a final security review before production deployment.

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getTravelInfoFromAI } from "../utils/getAPI";
+import type { RootState } from "./store";
 
 export interface Hotel {
   hotelName: string;
@@ -104,11 +105,8 @@ const travelSlice = createSlice({
 export const { clearTravelData } = travelSlice.actions;
 export default travelSlice.reducer;
 
-export const selectHotels = (state: { travel: TravelState }) =>
-  state.travel.hotels;
-export const selectAttractions = (state: { travel: TravelState }) =>
+export const selectHotels = (state: RootState) => state.travel.hotels;
+export const selectAttractions = (state: RootState) =>
   state.travel.attractions;
-export const selectTravelStatus = (state: { travel: TravelState }) =>
-  state.travel.status;
-export const selectTravelError = (state: { travel: TravelState }) =>
-  state.travel.error;
+export const selectTravelStatus = (state: RootState) => state.travel.status;
+export const selectTravelError = (state: RootState) => state.travel.error;

@@ -10,9 +10,23 @@ const AttractionCard = ({ attraction }: AttractionCardProps) => {
 
   return (
     <div className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      {/* Can add an image here */}
-      {imageUrl && <img src={imageUrl} alt="image" />}
-      <div className="h-40 bg-gray-200"></div>
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={attractionName}
+          className="h-40 w-full object-cover"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        <div
+          className="flex h-40 items-center justify-center bg-gray-200 text-sm text-gray-600"
+          role="img"
+          aria-label={`No image available for ${attractionName}`}
+        >
+          Image unavailable
+        </div>
+      )}
 
       <div className="p-4">
         <div className="flex justify-between items-start">
@@ -25,11 +39,8 @@ const AttractionCard = ({ attraction }: AttractionCardProps) => {
         <p className="text-sm text-gray-600 mt-1">{location}</p>
         <p className="text-sm mt-2 line-clamp-2">{description}</p>
 
-        <div className="mt-3 pt-3 border-t flex justify-between items-center">
+        <div className="mt-3 border-t pt-3">
           <span className="font-medium">{entryFee}</span>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
-            Details
-          </button>
         </div>
       </div>
     </div>

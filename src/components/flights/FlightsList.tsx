@@ -1,11 +1,11 @@
-import { Flight } from "../../redux/IFlights";
+import type { Flight } from "../../redux/IFlights";
 import FlightCard from "./FlightCard";
 
 interface FlightListProps {
   flights: Flight[];
 }
 
-const FlightList: React.FC<FlightListProps> = ({ flights }) => {
+const FlightList = ({ flights }: FlightListProps) => {
   if (!flights || flights.length === 0) {
     return <div className="text-center p-4">No flights available</div>;
   }

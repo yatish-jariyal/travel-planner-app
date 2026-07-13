@@ -5,12 +5,14 @@ import { requireEnvironmentVariable } from "./env";
 const TOKEN_EXPIRY = 30000;
 
 interface AmadeusEnvironment {
+  VITE_AMADEUS_API_BASE_URL?: string;
   VITE_TOKEN_URL?: string;
   VITE_CLIENT_ID?: string;
   VITE_CLIENT_SECRET?: string;
 }
 
 export interface AmadeusConfig {
+  apiBaseUrl: string;
   tokenUrl: string;
   clientId: string;
   clientSecret: string;
@@ -19,6 +21,10 @@ export interface AmadeusConfig {
 export const getAmadeusConfig = (
   environment: AmadeusEnvironment
 ): AmadeusConfig => ({
+  apiBaseUrl: requireEnvironmentVariable(
+    "VITE_AMADEUS_API_BASE_URL",
+    environment.VITE_AMADEUS_API_BASE_URL
+  ).replace(/\/$/, ""),
   tokenUrl: requireEnvironmentVariable(
     "VITE_TOKEN_URL",
     environment.VITE_TOKEN_URL

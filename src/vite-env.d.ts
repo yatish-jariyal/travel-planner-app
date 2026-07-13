@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+  readonly VITE_AMADEUS_API_BASE_URL?: string;
   readonly VITE_TOKEN_URL?: string;
   readonly VITE_CLIENT_ID?: string;
   readonly VITE_CLIENT_SECRET?: string;

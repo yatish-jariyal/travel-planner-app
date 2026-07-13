@@ -90,8 +90,3 @@ export interface FlightArguments {
   sources: string[];
   searchCriteria: { maxFlightOffers: number };
 }
-
-export interface AirportCodes {
-  originCode: string;
-  destinationCode: string;
-}

@@ -1,5 +1,4 @@
-import React from "react";
-import { Flight } from "../../redux/IFlights";
+import type { Flight } from "../../redux/IFlights";
 import {
   formatDate,
   formatDuration,
@@ -10,7 +9,7 @@ interface FlightCardProps {
   flight: Flight;
 }
 
-const FlightCard: React.FC<FlightCardProps> = ({ flight }) => {
+const FlightCard = ({ flight }: FlightCardProps) => {
   const firstSegment = flight.itineraries[0]?.segments[0];
 
   const cabinClass =

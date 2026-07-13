@@ -1,6 +1,5 @@
 import type { JSX, KeyboardEvent } from "react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import {
   selectFlights,
@@ -13,6 +12,7 @@ import {
   selectTravelError,
   selectTravelStatus,
 } from "../../redux/travelSlice";
+import { useAppSelector } from "../../redux/hooks";
 import AttractionsList from "../attractions/AttractionsList";
 import FlightsList from "../flights/FlightsList";
 import HotelsList from "../hotels/HotelsList";
@@ -75,13 +75,13 @@ const tabs: TabDefinition[] = [
 
 const TravelTabsPage = () => {
   const [activeTab, setActiveTab] = useState<TabId>("flights");
-  const hotels = useSelector(selectHotels);
-  const attractions = useSelector(selectAttractions);
-  const flights = useSelector(selectFlights).flights;
-  const flightsStatus = useSelector(selectFlightsStatus);
-  const flightsError = useSelector(selectFlightsError);
-  const travelStatus = useSelector(selectTravelStatus);
-  const travelError = useSelector(selectTravelError);
+  const hotels = useAppSelector(selectHotels);
+  const attractions = useAppSelector(selectAttractions);
+  const flights = useAppSelector(selectFlights).flights;
+  const flightsStatus = useAppSelector(selectFlightsStatus);
+  const flightsError = useAppSelector(selectFlightsError);
+  const travelStatus = useAppSelector(selectTravelStatus);
+  const travelError = useAppSelector(selectTravelError);
   const navigate = useNavigate();
 
   useEffect(() => {
