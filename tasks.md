@@ -12,7 +12,7 @@ This checklist mirrors the phased development plan. Check items only after the c
 - [x] Run lint.
 - [x] Run the production build successfully.
 - [x] Review the final documentation diff.
-- [ ] Commit, push, and open the documentation pull request.
+- [x] Commit, push, and open the documentation pull request.
 
 ## PR 2 — Travel-data reliability (`fix/travel-data-parsing`)
 
@@ -29,13 +29,13 @@ This checklist mirrors the phased development plan. Check items only after the c
 ## PR 3 — Environment and credential setup (`docs/env-setup`)
 
 - [ ] Rotate the exposed Google API credential.
-- [ ] Add `.env.example` containing placeholders only.
-- [ ] Document every required variable and how it is used.
-- [ ] Label which variables are required and which features are optional.
-- [ ] Document that `VITE_*` values are included in the browser bundle.
-- [ ] Choose and document a server-side strategy for private credentials.
-- [ ] Add clear handling for missing configuration.
-- [ ] Verify setup from a fresh clone.
+- [x] Add `.env.example` containing placeholders only.
+- [x] Document every required variable and how it is used.
+- [x] Label which variables are required and which features are optional.
+- [x] Document that `VITE_*` values are included in the browser bundle.
+- [x] Choose and document a server-side strategy for private credentials.
+- [x] Add clear handling for missing configuration.
+- [x] Verify setup from a fresh clone.
 
 ## PR 4 — Result and error states (`fix/result-error-states`)
 

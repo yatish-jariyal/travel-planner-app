@@ -14,15 +14,20 @@ const initialState: FlightsState = {
   error: null,
 };
 
-export const fetchFlightsInfo = createAsyncThunk(
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : "Unable to load flights.";
+
+export const fetchFlightsInfo = createAsyncThunk<
+  Flight[],
+  FlightArguments,
+  { rejectValue: string }
+>(
   "travel/fetchFlightsInfo",
-  async (body: FlightArguments) => {
+  async (body, { rejectWithValue }) => {
     try {
-      const response = await getData(body);
-      console.log("redux response", response);
-      return response;
+      return await getData(body);
     } catch (error) {
-      console.log(error);
+      return rejectWithValue(getErrorMessage(error));
     }
   }
 );
@@ -38,13 +43,13 @@ const flightsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchFlightsInfo.fulfilled, (state, action) => {
-        console.log("in redux", action.payload);
         state.status = "succeeded";
-        state.flights = action?.payload || [];
+        state.flights = action.payload;
       })
       .addCase(fetchFlightsInfo.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message || "Something went wrong";
+        state.error =
+          action.payload ?? action.error.message ?? "Unable to load flights.";
       });
   },
 });
