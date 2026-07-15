@@ -1,8 +1,8 @@
-import { Flight, FlightArguments } from "../redux/IFlights";
+import { Flight, FlightSearchRequest } from "../redux/IFlights";
 import type { LocationData } from "./types";
 import { apiClient } from "./apiClient";
 
-export const getData = async (body: FlightArguments): Promise<Flight[]> => {
+export const getData = async (body: FlightSearchRequest): Promise<Flight[]> => {
   const response = await apiClient.post<{ data: Flight[] }>(
     "/api/flights/search",
     body
@@ -18,36 +18,21 @@ export const getAirport = async (city: string): Promise<LocationData[]> => {
   return response.data.data;
 };
 
-export const createFlightsPayload = ({
+export const createFlightSearchRequest = ({
   originCode,
   destinationCode,
   startDate,
+  endDate,
 }: {
   originCode: string;
   destinationCode: string;
   startDate: string;
+  endDate: string;
 }) => {
   return {
-    currencyCode: "INR",
-    originDestinations: [
-      {
-        id: "1",
-        originLocationCode: originCode,
-        destinationLocationCode: destinationCode,
-        departureDateTimeRange: {
-          date: startDate,
-        },
-      },
-    ],
-    travelers: [
-      {
-        id: "1",
-        travelerType: "ADULT",
-      },
-    ],
-    sources: ["GDS"],
-    searchCriteria: {
-      maxFlightOffers: 20,
-    },
+    originCode,
+    destinationCode,
+    departureDate: startDate,
+    returnDate: endDate,
   };
 };

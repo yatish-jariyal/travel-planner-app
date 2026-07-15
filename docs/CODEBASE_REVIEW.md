@@ -8,7 +8,7 @@ The React client handles forms, Redux request state, and result rendering. It ca
 - `POST /api/flights/search`
 - `POST /api/travel-info`
 
-The Node/Express backend validates requests and owns all provider communication. Amadeus authentication and tokens, Gemini credentials, and optional Google Search credentials never cross the API boundary.
+The Node/Express backend validates requests and owns all provider communication. SerpApi, Gemini, and optional Google Search credentials never cross the API boundary. Airport autocomplete reads a bundled OurAirports-derived index.
 
 ## Resolved high-priority findings
 
@@ -33,7 +33,7 @@ No hosting target has been chosen. Secret-manager integration, workload identity
 
 ### In-memory controls are instance-local
 
-Rate limits and Amadeus token caching are process-local. They provide a secure baseline for local and single-instance use. Horizontally scaled deployment should use a shared rate-limit store and review caching behavior.
+Rate limits and the SerpApi search cache are process-local. They provide a secure baseline for personal and single-instance use. Horizontally scaled deployment should use shared stores and review provider quotas.
 
 ### Generated travel information is not inventory
 

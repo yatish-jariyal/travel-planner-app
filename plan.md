@@ -104,6 +104,22 @@ Turn the current prototype into a reliable, secure, maintainable travel-planning
 
 **Done when:** Automated checks and bundle-secret scans pass, the browser contacts only project-owned API routes, and provider-side credential actions are recorded without secret values.
 
+### Phase 7 — Use a personal-project flight provider
+
+**Branch:** `feat/serpapi-flight-search`
+
+**Outcome:** Flight and airport search work without an Amadeus account while remaining replaceable for a future public launch.
+
+- Search scheduled-service airports from a local OurAirports-derived index.
+- Search round-trip Google Flights results through server-side SerpApi.
+- Normalize provider output into a project-owned flight contract.
+- Cache identical searches to conserve the 250-search personal free tier.
+- Remove Amadeus code and configuration.
+- Add provider, cache, airport-search, and route coverage.
+- Document public-data attribution, quota limits, and future provider replacement.
+
+**Done when:** A live SerpApi request returns normalized INR results, airport search makes no external request, automated checks pass, and the browser key remains server-only.
+
 ## Pull-request standard
 
 Each pull request should include:

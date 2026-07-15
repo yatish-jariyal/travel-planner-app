@@ -1,6 +1,6 @@
 # Production Readiness
 
-The repository now has a project-owned API boundary. Amadeus token exchange, Gemini generation, and optional Google image search execute only in the Node backend; the React bundle contains no provider credentials.
+The repository now has a project-owned API boundary. SerpApi flight search, Gemini generation, and optional Google image search execute only in the Node backend; the React bundle contains no provider credentials.
 
 ## Implemented controls
 
@@ -8,7 +8,8 @@ The repository now has a project-owned API boundary. Amadeus token exchange, Gem
 - JSON request bodies are limited to 16 KB.
 - API requests are rate-limited and return standard rate-limit headers.
 - Provider clients have bounded timeouts.
-- Amadeus access tokens are cached in server memory using provider expiry.
+- Identical SerpApi searches are cached for 15 minutes to conserve quota.
+- Airport autocomplete uses a local public-domain OurAirports index.
 - CORS allows only configured frontend origins.
 - Helmet applies baseline HTTP security headers.
 - Provider errors are sanitized and structured logs omit secrets and response bodies.
@@ -56,7 +57,9 @@ Test valid results, provider timeout, missing optional image configuration, inva
 
 ## External API usage
 
-One submitted trip can produce one flight request and one Gemini request. Airport searches run after a 500 ms debounce. The server reuses an unexpired Amadeus token. Optional image enrichment can make one Google search per returned attraction.
+One uncached submitted trip can produce one SerpApi flight request and one Gemini request. Airport searches run locally after a 500 ms debounce. Optional image enrichment can make one Google search per returned attraction.
+
+The personal SerpApi plan currently allows 250 searches per month. Cached identical searches do not consume another project request while the 15-minute server entry remains valid. This is appropriate for personal development, not an assumption for a public production workload.
 
 Generated hotel prices, availability, attraction fees, and ratings are guidance rather than live booking inventory. Review provider quotas, pricing, billing alerts, and model lifecycle before every release.
 

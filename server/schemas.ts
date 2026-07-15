@@ -1,37 +1,23 @@
 import { z } from "zod";
 
 const dateString = z.iso.date();
-const locationCode = z.string().trim().regex(/^[A-Z]{3}$/);
+const locationCode = z
+  .string()
+  .trim()
+  .regex(/^[A-Z]{3}(,[A-Z]{3}){0,9}$/);
 
 export const airportQuerySchema = z.strictObject({
   keyword: z.string().trim().min(2).max(80),
 });
 
 export const flightSearchSchema = z.strictObject({
-  currencyCode: z.string().trim().regex(/^[A-Z]{3}$/),
-  originDestinations: z
-    .array(
-      z.strictObject({
-        id: z.string().trim().min(1).max(20),
-        originLocationCode: locationCode,
-        destinationLocationCode: locationCode,
-        departureDateTimeRange: z.strictObject({ date: dateString }),
-      })
-    )
-    .length(1),
-  travelers: z
-    .array(
-      z.strictObject({
-        id: z.string().trim().min(1).max(20),
-        travelerType: z.enum(["ADULT"]),
-      })
-    )
-    .min(1)
-    .max(9),
-  sources: z.array(z.enum(["GDS"])).length(1),
-  searchCriteria: z.strictObject({
-    maxFlightOffers: z.number().int().min(1).max(50),
-  }),
+  originCode: locationCode,
+  destinationCode: locationCode,
+  departureDate: dateString,
+  returnDate: dateString,
+}).refine((value) => value.returnDate >= value.departureDate, {
+  path: ["returnDate"],
+  message: "Return date must be on or after departure date.",
 });
 
 export const travelInfoSchema = z

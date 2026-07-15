@@ -12,7 +12,7 @@ import {
   fetchTravelInfo,
   selectTravelStatus,
 } from "../../redux/travelSlice";
-import { createFlightsPayload } from "../../utils/getFlights";
+import { createFlightSearchRequest } from "../../utils/getFlights";
 import { validateTravelForm } from "../../utils/travelFormValidation";
 import type { LocationData } from "../../utils/types";
 import AppLoader from "../common/AppLoader";
@@ -80,10 +80,12 @@ const TravelForm = () => {
     dispatch(clearTravelData());
     dispatch(clearFlightsData());
 
-    const flightsPayload = createFlightsPayload({
-      originCode: originCity.iataCode,
-      destinationCode: destinationCity.iataCode,
+    const flightsPayload = createFlightSearchRequest({
+      originCode: originCity.flightSearchCode ?? originCity.iataCode,
+      destinationCode:
+        destinationCity.flightSearchCode ?? destinationCity.iataCode,
       startDate,
+      endDate,
     });
 
     await Promise.all([

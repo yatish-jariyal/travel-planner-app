@@ -20,6 +20,8 @@ export interface Attraction {
   entryFee: string;
   ratings: string;
   imageUrl: string;
+  imageSourceName?: string;
+  imageSourceUrl?: string;
 }
 
 export interface TravelDataResponse {
