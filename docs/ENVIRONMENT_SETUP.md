@@ -25,7 +25,9 @@ Replace the placeholders, then run `npm run dev`. The command starts the API on 
 | `FLIGHT_SEARCH_LANGUAGE` | Optional | Two-letter result language; defaults to `en`. |
 | `FLIGHT_SEARCH_CACHE_TTL_MS` | Optional | Identical-search cache lifetime; defaults to 15 minutes. |
 | `GEMINI_API_KEY` | Required for suggestions | Backend-only restricted Gemini credential. |
-| `GEMINI_MODEL` | Optional | Defaults to the free-tier-friendly `gemini-3.1-flash-lite` model. |
+| `GEMINI_MODEL` | Optional | Primary model; defaults to `gemini-3.5-flash`. |
+| `GEMINI_FALLBACK_MODEL` | Optional | Quota fallback; defaults to `gemini-3.1-flash-lite`. |
+| `GEMINI_FALLBACK_COOLDOWN_MS` | Optional | Time to keep using the fallback after primary-model quota exhaustion; defaults to 15 minutes. |
 | `GEMINI_TIMEOUT_MS` | Optional | Gemini generation timeout; defaults to 60 seconds. |
 | `GOOGLE_SEARCH_API_KEY` | Optional pair | Backend-only Custom Search key. |
 | `GOOGLE_SEARCH_ENGINE_ID` | Optional pair | Search-engine identifier; configure with the search key or omit both. |

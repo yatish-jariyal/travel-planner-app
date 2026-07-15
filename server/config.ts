@@ -14,7 +14,13 @@ const environmentSchema = z.object({
   FLIGHT_SEARCH_LANGUAGE: z.string().trim().regex(/^[a-z]{2}$/).default("en"),
   FLIGHT_SEARCH_CACHE_TTL_MS: positiveInteger(900_000),
   GEMINI_API_KEY: z.string().trim().min(1).optional(),
-  GEMINI_MODEL: z.string().trim().min(1).default("gemini-3.1-flash-lite"),
+  GEMINI_MODEL: z.string().trim().min(1).default("gemini-3.5-flash"),
+  GEMINI_FALLBACK_MODEL: z
+    .string()
+    .trim()
+    .min(1)
+    .default("gemini-3.1-flash-lite"),
+  GEMINI_FALLBACK_COOLDOWN_MS: positiveInteger(900_000),
   GEMINI_TIMEOUT_MS: positiveInteger(60_000),
   GOOGLE_SEARCH_API_KEY: z.string().trim().optional(),
   GOOGLE_SEARCH_ENGINE_ID: z.string().trim().optional(),
@@ -60,6 +66,8 @@ export const loadConfig = (environment: NodeJS.ProcessEnv = process.env) => {
     gemini: {
       apiKey: parsed.data.GEMINI_API_KEY,
       model: parsed.data.GEMINI_MODEL,
+      fallbackModel: parsed.data.GEMINI_FALLBACK_MODEL,
+      fallbackCooldownMs: parsed.data.GEMINI_FALLBACK_COOLDOWN_MS,
       timeoutMs: parsed.data.GEMINI_TIMEOUT_MS,
     },
     googleSearch: {

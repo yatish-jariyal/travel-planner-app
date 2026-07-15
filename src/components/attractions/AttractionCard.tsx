@@ -5,8 +5,16 @@ interface AttractionCardProps {
 }
 
 const AttractionCard = ({ attraction }: AttractionCardProps) => {
-  const { attractionName, description, location, entryFee, ratings, imageUrl } =
-    attraction;
+  const {
+    attractionName,
+    description,
+    location,
+    entryFee,
+    ratings,
+    imageUrl,
+    imageSourceName,
+    imageSourceUrl,
+  } = attraction;
 
   return (
     <div className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -38,6 +46,17 @@ const AttractionCard = ({ attraction }: AttractionCardProps) => {
 
         <p className="text-sm text-gray-600 mt-1">{location}</p>
         <p className="text-sm mt-2 line-clamp-2">{description}</p>
+
+        {imageSourceName && imageSourceUrl && (
+          <a
+            href={imageSourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-2 inline-block text-xs text-blue-700 underline"
+          >
+            Image source: {imageSourceName}
+          </a>
+        )}
 
         <div className="mt-3 border-t pt-3">
           <span className="font-medium">{entryFee}</span>

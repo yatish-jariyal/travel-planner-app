@@ -10,7 +10,9 @@ describe("server configuration", () => {
     const config = loadConfig({});
 
     expect(config.port).toBe(3000);
-    expect(config.gemini.model).toBe("gemini-3.1-flash-lite");
+    expect(config.gemini.model).toBe("gemini-3.5-flash");
+    expect(config.gemini.fallbackModel).toBe("gemini-3.1-flash-lite");
+    expect(config.gemini.fallbackCooldownMs).toBe(900_000);
     expect(config.gemini.timeoutMs).toBe(60_000);
     expect(config.flightSearch).toEqual(
       expect.objectContaining({

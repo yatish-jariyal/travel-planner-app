@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { ProviderError } from "../errors.js";
-import { geminiProviderError, parseTravelDataResponse } from "./travel.js";
+import {
+  geminiProviderError,
+  parseTravelDataResponse,
+  shouldFallbackGeminiModel,
+} from "./travel.js";
 
 const completeHotel = {
   hotelName: "Harbour Hotel",
@@ -121,5 +125,26 @@ describe("geminiProviderError", () => {
       status: 503,
     });
     expect(error.message).not.toContain("123");
+  });
+});
+
+describe("shouldFallbackGeminiModel", () => {
+  it("falls back for a model-specific free-tier quota", () => {
+    expect(
+      shouldFallbackGeminiModel({
+        status: 429,
+        message:
+          "Quota exceeded for generativelanguage.googleapis.com/generate_content_free_tier_requests",
+      })
+    ).toBe(true);
+  });
+
+  it("does not retry another model when billing credits are depleted", () => {
+    expect(
+      shouldFallbackGeminiModel({
+        status: 429,
+        message: "Your prepayment credits are depleted.",
+      })
+    ).toBe(false);
   });
 });
