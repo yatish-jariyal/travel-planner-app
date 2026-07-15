@@ -1,4 +1,4 @@
-import { Attraction } from "../../redux/travelSlice";
+import type { Attraction } from "../travelInfo.types";
 
 interface AttractionCardProps {
   attraction: Attraction;

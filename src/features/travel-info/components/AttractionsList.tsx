@@ -1,4 +1,4 @@
-import { Attraction } from "../../redux/travelSlice";
+import type { Attraction } from "../travelInfo.types";
 import AttractionCard from "./AttractionCard";
 import EmptyAttractionsList from "./EmptyAttractionsList";
 

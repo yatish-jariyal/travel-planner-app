@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { LocationData } from "./types";
-import { validateTravelForm } from "./travelFormValidation";
+import type { LocationData } from "../airports/airports.types";
+import { validateTravelForm } from "./tripSearch.validation";
 
 const createLocation = (iataCode: string): LocationData => ({
   name: iataCode,

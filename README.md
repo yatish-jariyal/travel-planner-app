@@ -82,12 +82,15 @@ Open `http://localhost:5173`. Vite proxies `/api` to `http://localhost:3000` dur
 ```text
 server/                # Express API, validation, provider adapters, tests
 src/
-├── components/        # Form, navigation, and result UI
-├── redux/             # Store, async thunks, slices, and interfaces
-├── utils/             # Project API client, payloads, and formatting
-├── App.tsx
+├── app/               # Application shell, routing, Redux store, typed hooks
+├── features/          # Airport, flight, trip-search, and travel-result features
+│   └── <feature>/     # Feature UI, API calls, state, types, and tests
+├── shared/            # Reusable API infrastructure and UI components
 └── main.tsx
 ```
+
+Frontend code is organized by feature so related components, API functions,
+Redux logic, domain types, and tests can be found and changed together.
 
 ## Documentation
 

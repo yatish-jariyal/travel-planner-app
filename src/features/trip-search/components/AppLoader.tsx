@@ -1,4 +1,4 @@
-import { LocationData } from "../../utils/types";
+import type { LocationData } from "../../airports/airports.types";
 
 type AppLoaderProps = {
   city?: LocationData | null;

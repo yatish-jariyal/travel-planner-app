@@ -3,9 +3,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
-import flightsReducer, { fetchFlightsInfo } from "../../redux/flightsSlice";
-import travelReducer, { fetchTravelInfo } from "../../redux/travelSlice";
-import TravelTabs from "./TravelTabs";
+import flightsReducer, { loadFlights } from "../flights/flights.slice";
+import travelReducer, { loadTravelInfo } from "../travel-info/travelInfo.slice";
+import TravelResultsPage from "./TravelResultsPage";
 
 const createTestStore = () =>
   configureStore({
@@ -16,21 +16,21 @@ const renderResults = (store: ReturnType<typeof createTestStore>) =>
   renderToStaticMarkup(
     <Provider store={store}>
       <MemoryRouter initialEntries={["/travel"]}>
-        <TravelTabs />
+        <TravelResultsPage />
       </MemoryRouter>
     </Provider>
   );
 
-describe("TravelTabs", () => {
+describe("TravelResultsPage", () => {
   it("shows a flight error while preserving successful travel results", () => {
     const store = createTestStore();
     store.dispatch({
-      type: fetchFlightsInfo.rejected.type,
+      type: loadFlights.rejected.type,
       payload: "Flight service unavailable",
       error: { message: "Rejected" },
     });
     store.dispatch({
-      type: fetchTravelInfo.fulfilled.type,
+      type: loadTravelInfo.fulfilled.type,
       payload: { hotels: [], attractions: [] },
     });
 
@@ -43,9 +43,9 @@ describe("TravelTabs", () => {
 
   it("distinguishes a successful empty flight result from a failure", () => {
     const store = createTestStore();
-    store.dispatch({ type: fetchFlightsInfo.fulfilled.type, payload: [] });
+    store.dispatch({ type: loadFlights.fulfilled.type, payload: [] });
     store.dispatch({
-      type: fetchTravelInfo.fulfilled.type,
+      type: loadTravelInfo.fulfilled.type,
       payload: { hotels: [], attractions: [] },
     });
 
@@ -57,8 +57,8 @@ describe("TravelTabs", () => {
 
   it("renders accessible tab and loading-state semantics", () => {
     const store = createTestStore();
-    store.dispatch({ type: fetchFlightsInfo.pending.type });
-    store.dispatch({ type: fetchTravelInfo.pending.type });
+    store.dispatch({ type: loadFlights.pending.type });
+    store.dispatch({ type: loadTravelInfo.pending.type });
 
     const html = renderResults(store);
 

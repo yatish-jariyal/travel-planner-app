@@ -3,22 +3,22 @@ import { addDays, format } from "date-fns";
 import { useNavigate } from "react-router";
 import {
   clearFlightsData,
-  fetchFlightsInfo,
+  loadFlights,
   selectFlightsStatus,
-} from "../../redux/flightsSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+} from "../../flights/flights.slice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   clearTravelData,
-  fetchTravelInfo,
+  loadTravelInfo,
   selectTravelStatus,
-} from "../../redux/travelSlice";
-import { createFlightSearchRequest } from "../../utils/getFlights";
-import { validateTravelForm } from "../../utils/travelFormValidation";
-import type { LocationData } from "../../utils/types";
-import AppLoader from "../common/AppLoader";
-import CitySearch from "../common/CitySearch";
-import DateInput from "../common/DateInput";
-import SubmitButton from "../common/SubmitButton";
+} from "../../travel-info/travelInfo.slice";
+import type { LocationData } from "../../airports/airports.types";
+import { createFlightSearchRequest } from "../../flights/flights.api";
+import { validateTravelForm } from "../tripSearch.validation";
+import AppLoader from "./AppLoader";
+import CitySearch from "./CitySearch";
+import DateInput from "./DateInput";
+import SubmitButton from "./SubmitButton";
 
 const TravelForm = () => {
   const today = format(new Date(), "yyyy-MM-dd");
@@ -90,13 +90,13 @@ const TravelForm = () => {
 
     await Promise.all([
       dispatch(
-        fetchTravelInfo({
+        loadTravelInfo({
           destinationCity: destinationCity.address.cityName,
           startDate,
           endDate,
         })
       ),
-      dispatch(fetchFlightsInfo(flightsPayload)),
+      dispatch(loadFlights(flightsPayload)),
     ]);
 
     navigate("/travel");

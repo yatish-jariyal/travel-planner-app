@@ -1,10 +1,10 @@
-import type { Flight } from "../../redux/IFlights";
+import type { Flight } from "../flights.types";
 import {
   formatDate,
   formatDuration,
   formatPrice,
   getCabinDisplay,
-} from "../../utils/helper";
+} from "../flightFormatting";
 
 interface FlightCardProps {
   flight: Flight;

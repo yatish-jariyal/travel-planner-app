@@ -1,11 +1,11 @@
-import type { TravelDataResponse } from "../redux/travelSlice";
-import { apiClient } from "./apiClient";
+import { apiClient } from "../../shared/api/apiClient";
+import type { TravelDataResponse, TravelInfoRequest } from "./travelInfo.types";
 
-export const getTravelInfoFromAI = async (
-  destinationCity: string,
-  startDate: string,
-  endDate: string
-): Promise<TravelDataResponse> => {
+export const fetchTravelInfo = async ({
+  destinationCity,
+  startDate,
+  endDate,
+}: TravelInfoRequest): Promise<TravelDataResponse> => {
   const response = await apiClient.post<{ data: TravelDataResponse }>(
     "/api/travel-info",
     { destinationCity, startDate, endDate },
