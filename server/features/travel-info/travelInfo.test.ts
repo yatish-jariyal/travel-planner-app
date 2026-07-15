@@ -1,12 +1,19 @@
-import { describe, expect, it } from "vitest";
-import { ProviderError } from "../errors.js";
+import { describe, expect, it, vi } from "vitest";
+import { ProviderError } from "../../shared/errors.js";
 import {
   geminiProviderError,
-  parseTravelDataResponse,
   shouldFallbackGeminiModel,
+} from "./gemini/gemini.errors.js";
+import { parseTravelDataResponse } from "./gemini/gemini.parser.js";
+import {
   TRAVEL_SUGGESTION_COUNT,
   travelResponseSchema,
-} from "./travel.js";
+} from "./gemini/gemini.prompt.js";
+import { createTravelInfoService } from "./travelInfo.service.js";
+import type {
+  AttractionImageService,
+  TravelDataGenerator,
+} from "./travelInfo.types.js";
 
 const completeHotel = {
   hotelName: "Harbour Hotel",
@@ -162,5 +169,56 @@ describe("shouldFallbackGeminiModel", () => {
         message: "Your prepayment credits are depleted.",
       })
     ).toBe(false);
+  });
+});
+
+describe("travel information service", () => {
+  it("orchestrates travel generation and optional image enrichment", async () => {
+    const generate = vi.fn().mockResolvedValue({
+      hotels: [completeHotel],
+      attractions: [completeAttraction],
+    });
+    const enrich = vi.fn().mockResolvedValue([
+      { ...completeAttraction, imageSourceName: "Wikipedia" },
+    ]);
+    const service = createTravelInfoService(
+      { generate } as TravelDataGenerator,
+      { enrich } as AttractionImageService
+    );
+    const input = {
+      destinationCity: "Sydney",
+      startDate: "2026-08-01",
+      endDate: "2026-08-03",
+    };
+
+    await expect(service.getTravelInfo(input)).resolves.toEqual({
+      hotels: [completeHotel],
+      attractions: [
+        { ...completeAttraction, imageSourceName: "Wikipedia" },
+      ],
+    });
+    expect(generate).toHaveBeenCalledWith(input);
+    expect(enrich).toHaveBeenCalledWith([completeAttraction]);
+  });
+
+  it("sanitizes Gemini failures before image enrichment", async () => {
+    const generate = vi.fn().mockRejectedValue({
+      status: 429,
+      message: "private quota details for project 123",
+    });
+    const enrich = vi.fn();
+    const service = createTravelInfoService(
+      { generate } as TravelDataGenerator,
+      { enrich } as AttractionImageService
+    );
+
+    await expect(
+      service.getTravelInfo({
+        destinationCity: "Sydney",
+        startDate: "2026-08-01",
+        endDate: "2026-08-03",
+      })
+    ).rejects.toThrow("Gemini request quota has been reached.");
+    expect(enrich).not.toHaveBeenCalled();
   });
 });

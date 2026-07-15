@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import type { AirportResult, AirportService } from "../contracts.js";
+import type { AirportResult, AirportService } from "./airports.types.js";
 
 export interface AirportRecord {
   id: string;
@@ -11,7 +11,7 @@ export interface AirportRecord {
 }
 
 const airportData = JSON.parse(
-  readFileSync(new URL("../../data/airports.json", import.meta.url), "utf8")
+  readFileSync(new URL("../../../data/airports.json", import.meta.url), "utf8")
 ) as AirportRecord[];
 
 const searchableText = (airport: AirportRecord) =>

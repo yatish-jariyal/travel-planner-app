@@ -2,8 +2,8 @@ import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { createApp } from "./app.js";
 import { loadConfig } from "./config.js";
-import type { Services } from "./contracts.js";
-import { ProviderError } from "./errors.js";
+import type { Services } from "./services.js";
+import { ProviderError } from "./shared/errors.js";
 
 const createMockServices = (): Services => ({
   airports: { search: vi.fn().mockResolvedValue([{ iataCode: "DEL" }]) },

@@ -1,10 +1,10 @@
 import type { AxiosInstance } from "axios";
 import { describe, expect, it, vi } from "vitest";
-import { loadConfig } from "../config.js";
+import { loadConfig } from "../../config.js";
 import {
   createSerpApiFlightService,
-  normalizeSerpApiFlights,
-} from "./serpapi.js";
+} from "./serpapi.service.js";
+import { normalizeSerpApiFlights } from "./serpapi.mapper.js";
 
 const providerResponse = {
   best_flights: [

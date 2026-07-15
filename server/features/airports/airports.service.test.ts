@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createAirportService, type AirportRecord } from "./airports.js";
+import { createAirportService, type AirportRecord } from "./airports.service.js";
 
 const airports: AirportRecord[] = [
   {

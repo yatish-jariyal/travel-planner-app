@@ -80,7 +80,15 @@ Open `http://localhost:5173`. Vite proxies `/api` to `http://localhost:3000` dur
 ## Project structure
 
 ```text
-server/                # Express API, validation, provider adapters, tests
+server/
+├── features/          # Feature routes, schemas, services, types, and tests
+│   ├── airports/
+│   ├── flights/
+│   └── travel-info/   # Gemini generation and attraction-image enrichment
+├── shared/            # Cross-feature error handling and structured logging
+├── app.ts             # Express middleware and feature-router composition
+├── config.ts          # Validated backend configuration
+└── services.ts        # Provider and service composition
 src/
 ├── app/               # Application shell, routing, Redux store, typed hooks
 ├── features/          # Airport, flight, trip-search, and travel-result features
@@ -89,8 +97,9 @@ src/
 └── main.tsx
 ```
 
-Frontend code is organized by feature so related components, API functions,
-Redux logic, domain types, and tests can be found and changed together.
+Frontend and backend code are organized by feature so related UI, API routes,
+services, state, types, schemas, provider adapters, and tests can be found and
+changed together.
 
 ## Documentation
 
