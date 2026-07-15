@@ -1,7 +1,7 @@
-import type { LocationData } from "../../airports/airports.types";
+import type { AirportResult } from "../../../../shared/api/contracts";
 
 type AppLoaderProps = {
-  city?: LocationData | null;
+  city?: AirportResult | null;
 };
 
 const AppLoader = ({ city }: AppLoaderProps) => {

@@ -1,8 +1,5 @@
 import axios from "axios";
-
-interface ApiErrorResponse {
-  error?: { message?: string };
-}
+import type { ApiErrorResponse } from "../../../shared/api/contracts";
 
 const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
 

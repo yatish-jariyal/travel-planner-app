@@ -5,9 +5,9 @@ import { fetchTravelInfo } from "./travelInfo.api";
 import type {
   Attraction,
   Hotel,
-  TravelDataResponse,
   TravelInfoRequest,
-} from "./travelInfo.types";
+  TravelInfoResult,
+} from "../../../shared/api/contracts";
 
 interface TravelState {
   hotels: Hotel[];
@@ -24,7 +24,7 @@ const initialState: TravelState = {
 };
 
 export const loadTravelInfo = createAsyncThunk<
-  TravelDataResponse,
+  TravelInfoResult,
   TravelInfoRequest,
   { rejectValue: string }
 >(

@@ -1,12 +1,16 @@
 import { apiClient } from "../../shared/api/apiClient";
-import type { TravelDataResponse, TravelInfoRequest } from "./travelInfo.types";
+import type {
+  TravelInfoRequest,
+  TravelInfoResponse,
+  TravelInfoResult,
+} from "../../../shared/api/contracts";
 
 export const fetchTravelInfo = async ({
   destinationCity,
   startDate,
   endDate,
-}: TravelInfoRequest): Promise<TravelDataResponse> => {
-  const response = await apiClient.post<{ data: TravelDataResponse }>(
+}: TravelInfoRequest): Promise<TravelInfoResult> => {
+  const response = await apiClient.post<TravelInfoResponse>(
     "/api/travel-info",
     { destinationCity, startDate, endDate },
     // Gemini generation is intentionally allowed up to 60 seconds by the API.

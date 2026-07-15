@@ -1,10 +1,14 @@
 import { apiClient } from "../../shared/api/apiClient";
-import type { Flight, FlightSearchRequest } from "./flights.types";
+import type {
+  FlightResult,
+  FlightSearchRequest,
+  FlightSearchResponse,
+} from "../../../shared/api/contracts";
 
 export const searchFlights = async (
   request: FlightSearchRequest
-): Promise<Flight[]> => {
-  const response = await apiClient.post<{ data: Flight[] }>(
+): Promise<FlightResult[]> => {
+  const response = await apiClient.post<FlightSearchResponse>(
     "/api/flights/search",
     request
   );

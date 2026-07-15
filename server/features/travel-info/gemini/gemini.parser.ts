@@ -2,7 +2,7 @@ import { ProviderError } from "../../../shared/errors.js";
 import type {
   Attraction,
   Hotel,
-  TravelDataResponse,
+  TravelInfoResult,
 } from "../travelInfo.types.js";
 
 const NOT_AVAILABLE = "Not available";
@@ -80,5 +80,5 @@ export const parseTravelDataResponse = (rawResponse: string) => {
   return {
     hotels: normalizeCollection(value.hotels, normalizeHotel),
     attractions: normalizeCollection(value.attractions, normalizeAttraction),
-  } satisfies TravelDataResponse;
+  } satisfies TravelInfoResult;
 };

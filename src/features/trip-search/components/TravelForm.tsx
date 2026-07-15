@@ -12,9 +12,9 @@ import {
   loadTravelInfo,
   selectTravelStatus,
 } from "../../travel-info/travelInfo.slice";
-import type { LocationData } from "../../airports/airports.types";
 import { createFlightSearchRequest } from "../../flights/flights.api";
 import { validateTravelForm } from "../tripSearch.validation";
+import type { AirportResult } from "../../../../shared/api/contracts";
 import AppLoader from "./AppLoader";
 import CitySearch from "./CitySearch";
 import DateInput from "./DateInput";
@@ -27,9 +27,9 @@ const TravelForm = () => {
     format(addDays(new Date(), 1), "yyyy-MM-dd")
   );
   const [originQuery, setOriginQuery] = useState("");
-  const [originCity, setOriginCity] = useState<LocationData | null>(null);
+  const [originCity, setOriginCity] = useState<AirportResult | null>(null);
   const [destinationQuery, setDestinationQuery] = useState("");
-  const [destinationCity, setDestinationCity] = useState<LocationData | null>(
+  const [destinationCity, setDestinationCity] = useState<AirportResult | null>(
     null
   );
   const [validationErrors, setValidationErrors] = useState<string[]>([]);

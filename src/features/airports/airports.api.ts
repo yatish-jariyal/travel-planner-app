@@ -1,8 +1,11 @@
 import { apiClient } from "../../shared/api/apiClient";
-import type { LocationData } from "./airports.types";
+import type {
+  AirportResult,
+  AirportSearchResponse,
+} from "../../../shared/api/contracts";
 
-export const searchAirports = async (city: string): Promise<LocationData[]> => {
-  const response = await apiClient.get<{ data: LocationData[] }>(
+export const searchAirports = async (city: string): Promise<AirportResult[]> => {
+  const response = await apiClient.get<AirportSearchResponse>(
     "/api/airports",
     { params: { keyword: city } }
   );

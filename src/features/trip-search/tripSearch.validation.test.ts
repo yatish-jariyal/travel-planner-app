@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { LocationData } from "../airports/airports.types";
+import type { AirportResult } from "../../../shared/api/contracts";
 import { validateTravelForm } from "./tripSearch.validation";
 
-const createLocation = (iataCode: string): LocationData => ({
+const createLocation = (iataCode: string): AirportResult => ({
   name: iataCode,
   id: iataCode,
   iataCode,

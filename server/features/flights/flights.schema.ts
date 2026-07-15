@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { FlightSearchRequest } from "../../../shared/api/contracts.js";
 
 const dateString = z.iso.date();
 const locationCode = z
@@ -6,7 +7,7 @@ const locationCode = z
   .trim()
   .regex(/^[A-Z]{3}(,[A-Z]{3}){0,9}$/);
 
-export const flightSearchSchema = z
+export const flightSearchSchema: z.ZodType<FlightSearchRequest> = z
   .strictObject({
     originCode: locationCode,
     destinationCode: locationCode,

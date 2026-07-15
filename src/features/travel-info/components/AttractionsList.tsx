@@ -1,4 +1,4 @@
-import type { Attraction } from "../travelInfo.types";
+import type { Attraction } from "../../../../shared/api/contracts";
 import AttractionCard from "./AttractionCard";
 import EmptyAttractionsList from "./EmptyAttractionsList";
 

@@ -1,4 +1,4 @@
-import type { Hotel } from "../travelInfo.types";
+import type { Hotel } from "../../../../shared/api/contracts";
 import EmptyHotelsList from "./EmptyHotelsList";
 import HotelCard from "./HotelCard";
 
