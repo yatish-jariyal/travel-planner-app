@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import type { ApiErrorResponse } from "../../shared/api/contracts.js";
 import { ServiceConfigurationError } from "../config.js";
 import { writeLog } from "./logger.js";
 
@@ -15,6 +16,14 @@ export class ProviderError extends Error {
 }
 
 export class CorsOriginError extends Error {}
+
+const sendError = (
+  response: Response,
+  status: number,
+  body: ApiErrorResponse
+) => {
+  response.status(status).json(body);
+};
 
 export const providerError = (provider: string, error: unknown) => {
   if (error instanceof ProviderError || error instanceof ServiceConfigurationError) {
@@ -36,7 +45,7 @@ export const errorHandler = (
 ) => {
   void next;
   if (error instanceof ZodError) {
-    response.status(400).json({
+    sendError(response, 400, {
       error: {
         code: "INVALID_REQUEST",
         message: "The request contains invalid or unexpected fields.",
@@ -51,14 +60,14 @@ export const errorHandler = (
       path: request.path,
       message: error.message,
     });
-    response.status(503).json({
+    sendError(response, 503, {
       error: { code: "SERVICE_NOT_CONFIGURED", message: error.message },
     });
     return;
   }
 
   if (error instanceof CorsOriginError) {
-    response.status(403).json({
+    sendError(response, 403, {
       error: { code: "ORIGIN_NOT_ALLOWED", message: "Origin is not allowed." },
     });
     return;
@@ -70,14 +79,14 @@ export const errorHandler = (
       provider: error.provider,
       status: error.status,
     });
-    response.status(error.status).json({
+    sendError(response, error.status, {
       error: { code: "PROVIDER_ERROR", message: error.message },
     });
     return;
   }
 
   writeLog("error", "unhandled_request_error", { path: request.path });
-  response.status(500).json({
+  sendError(response, 500, {
     error: { code: "INTERNAL_ERROR", message: "An unexpected error occurred." },
   });
 };

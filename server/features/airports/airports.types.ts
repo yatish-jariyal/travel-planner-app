@@ -1,15 +1,7 @@
+import type { AirportResult } from "../../../shared/api/contracts.js";
+
 export interface AirportService {
   search(keyword: string): Promise<AirportResult[]>;
 }
 
-export interface AirportResult {
-  id: string;
-  iataCode: string;
-  flightSearchCode?: string;
-  name: string;
-  address: {
-    cityName: string;
-    countryName: string;
-    countryCode: string;
-  };
-}
+export type { AirportResult } from "../../../shared/api/contracts.js";

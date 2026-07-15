@@ -1,8 +1,8 @@
-import type { LocationData } from "../airports/airports.types";
+import type { AirportResult } from "../../../shared/api/contracts";
 
 interface TravelFormValues {
-  originCity: LocationData | null;
-  destinationCity: LocationData | null;
+  originCity: AirportResult | null;
+  destinationCity: AirportResult | null;
   startDate: string;
   endDate: string;
 }

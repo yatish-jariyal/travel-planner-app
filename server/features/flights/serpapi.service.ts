@@ -2,7 +2,7 @@ import axios, { type AxiosInstance } from "axios";
 import { requireSecret, type ServerConfig } from "../../config.js";
 import type {
   FlightResult,
-  FlightSearchPayload,
+  FlightSearchRequest,
   FlightService,
 } from "./flights.types.js";
 import { ProviderError, providerError } from "../../shared/errors.js";
@@ -22,7 +22,7 @@ export const createSerpApiFlightService = (
   const cache = new Map<string, CacheEntry>();
 
   return {
-    async search(payload: FlightSearchPayload) {
+    async search(payload: FlightSearchRequest) {
       const cacheKey = JSON.stringify(payload);
       const cached = cache.get(cacheKey);
       if (cached && cached.expiresAt > now()) {

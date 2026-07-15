@@ -1,4 +1,4 @@
-import type { Flight } from "../flights.types";
+import type { FlightResult } from "../../../../shared/api/contracts";
 import {
   formatDate,
   formatDuration,
@@ -7,7 +7,7 @@ import {
 } from "../flightFormatting";
 
 interface FlightCardProps {
-  flight: Flight;
+  flight: FlightResult;
 }
 
 const FlightCard = ({ flight }: FlightCardProps) => (

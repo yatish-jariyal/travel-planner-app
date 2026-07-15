@@ -2,6 +2,10 @@ import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import type {
+  ApiErrorResponse,
+  HealthResponse,
+} from "../shared/api/contracts.js";
 import type { ServerConfig } from "./config.js";
 import { createAirportsRouter } from "./features/airports/airports.routes.js";
 import { createFlightsRouter } from "./features/flights/flights.routes.js";
@@ -38,7 +42,8 @@ export const createApp = (services: Services, config: ServerConfig) => {
   );
 
   app.get("/api/health", (_request, response) => {
-    response.json({ status: "ok" });
+    const body: HealthResponse = { status: "ok" };
+    response.json(body);
   });
 
   app.use("/api/airports", createAirportsRouter(services.airports));
@@ -46,9 +51,10 @@ export const createApp = (services: Services, config: ServerConfig) => {
   app.use("/api/travel-info", createTravelInfoRouter(services.travel));
 
   app.use((_request, response) => {
-    response.status(404).json({
+    const body: ApiErrorResponse = {
       error: { code: "NOT_FOUND", message: "The requested route was not found." },
-    });
+    };
+    response.status(404).json(body);
   });
   app.use(errorHandler);
 

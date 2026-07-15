@@ -2,10 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 import { getApiErrorMessage } from "../../shared/api/apiClient";
 import { searchFlights } from "./flights.api";
-import type { Flight, FlightSearchRequest } from "./flights.types";
+import type {
+  FlightResult,
+  FlightSearchRequest,
+} from "../../../shared/api/contracts";
 
 interface FlightsState {
-  flights: Flight[];
+  flights: FlightResult[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
@@ -17,7 +20,7 @@ const initialState: FlightsState = {
 };
 
 export const loadFlights = createAsyncThunk<
-  Flight[],
+  FlightResult[],
   FlightSearchRequest,
   { rejectValue: string }
 >(

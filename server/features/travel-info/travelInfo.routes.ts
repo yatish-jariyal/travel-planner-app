@@ -1,4 +1,5 @@
 import { Router } from "express";
+import type { TravelInfoResponse } from "../../../shared/api/contracts.js";
 import { travelInfoSchema } from "./travelInfo.schema.js";
 import type { TravelService } from "./travelInfo.types.js";
 
@@ -8,7 +9,10 @@ export const createTravelInfoRouter = (service: TravelService) => {
   router.post("/", async (request, response, next) => {
     try {
       const input = travelInfoSchema.parse(request.body);
-      response.json({ data: await service.getTravelInfo(input) });
+      const body: TravelInfoResponse = {
+        data: await service.getTravelInfo(input),
+      };
+      response.json(body);
     } catch (error) {
       next(error);
     }

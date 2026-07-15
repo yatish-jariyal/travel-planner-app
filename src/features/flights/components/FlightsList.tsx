@@ -1,8 +1,8 @@
-import type { Flight } from "../flights.types";
+import type { FlightResult } from "../../../../shared/api/contracts";
 import FlightCard from "./FlightCard";
 
 interface FlightListProps {
-  flights: Flight[];
+  flights: FlightResult[];
 }
 
 const FlightList = ({ flights }: FlightListProps) => {

@@ -89,6 +89,8 @@ server/
 ├── app.ts             # Express middleware and feature-router composition
 ├── config.ts          # Validated backend configuration
 └── services.ts        # Provider and service composition
+shared/
+└── api/contracts.d.ts # Browser/server requests, responses, and API envelopes
 src/
 ├── app/               # Application shell, routing, Redux store, typed hooks
 ├── features/          # Airport, flight, trip-search, and travel-result features
@@ -99,7 +101,8 @@ src/
 
 Frontend and backend code are organized by feature so related UI, API routes,
 services, state, types, schemas, provider adapters, and tests can be found and
-changed together.
+changed together. Both sides import API contracts from `shared/api/contracts.d.ts`,
+while backend Zod schemas provide runtime validation at the network boundary.
 
 ## Documentation
 

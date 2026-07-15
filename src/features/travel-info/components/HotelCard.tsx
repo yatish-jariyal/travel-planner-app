@@ -1,4 +1,4 @@
-import type { Hotel } from "../travelInfo.types";
+import type { Hotel } from "../../../../shared/api/contracts";
 
 const HotelCard = ({ hotel }: { hotel: Hotel }) => {
   const starCount = Math.min(5, Math.max(0, Math.floor(Number(hotel.stars))));

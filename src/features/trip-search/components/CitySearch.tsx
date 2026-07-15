@@ -1,12 +1,12 @@
 import { useState, useEffect, useId, useRef } from "react";
 import type { ChangeEvent } from "react";
 import { searchAirports } from "../../airports/airports.api";
-import type { LocationData } from "../../airports/airports.types";
 import { getApiErrorMessage } from "../../../shared/api/apiClient";
+import type { AirportResult } from "../../../../shared/api/contracts";
 
 interface CitySearchProps {
   onQueryChange?: (query: string) => void;
-  onCitySelect?: (city: LocationData) => void;
+  onCitySelect?: (city: AirportResult) => void;
   defaultValue?: string;
   label: string;
 }
@@ -18,7 +18,7 @@ const CitySearch = ({
   label,
 }: CitySearchProps) => {
   const [query, setQuery] = useState<string>(defaultValue);
-  const [locations, setLocations] = useState<LocationData[]>([]);
+  const [locations, setLocations] = useState<AirportResult[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +66,7 @@ const CitySearch = ({
     }, 500);
   };
 
-  const handleCitySelect = (location: LocationData) => {
+  const handleCitySelect = (location: AirportResult) => {
     const selectedValue = location.flightSearchCode
       ? location.address.cityName
       : location.iataCode;

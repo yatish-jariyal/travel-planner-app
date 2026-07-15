@@ -1,4 +1,4 @@
-import type { TravelInfoInput } from "../travelInfo.types.js";
+import type { TravelInfoRequest } from "../travelInfo.types.js";
 
 export const TRAVEL_SUGGESTION_COUNT = 6;
 
@@ -6,7 +6,7 @@ export const createTravelPrompt = ({
   destinationCity,
   startDate,
   endDate,
-}: TravelInfoInput) => `Generate travel suggestions for ${destinationCity} for a stay from ${startDate} to ${endDate}.
+}: TravelInfoRequest) => `Generate travel suggestions for ${destinationCity} for a stay from ${startDate} to ${endDate}.
 Return JSON with two arrays named hotels and attractions. Include exactly ${TRAVEL_SUGGESTION_COUNT} hotels and exactly ${TRAVEL_SUGGESTION_COUNT} attractions.
 Each hotel must contain hotelName, stars, availability, price, description, location, and ratings.
 Each attraction must contain attractionName, description, location, entryFee, and ratings.
