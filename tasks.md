@@ -28,7 +28,7 @@ This checklist mirrors the phased development plan. Check items only after the c
 
 ## PR 3 — Environment and credential setup (`docs/env-setup`)
 
-- [ ] Rotate the exposed Google API credential.
+- [x] Rotate the exposed Google API credential.
 - [x] Add `.env.example` containing placeholders only.
 - [x] Document every required variable and how it is used.
 - [x] Label which variables are required and which features are optional.
@@ -75,10 +75,10 @@ This checklist mirrors the phased development plan. Check items only after the c
 - [x] Add sanitized structured errors and logs.
 - [x] Add backend route, configuration, and parser tests.
 - [x] Document local migration, deployment, and credential evidence.
-- [ ] Confirm the exposed Google API key was deleted in Google Cloud.
-- [ ] Classify and safely handle the unidentified active service-account key.
+- [x] Confirm the exposed Google API key was deleted in Google Cloud.
+- [x] Classify and safely handle the unidentified active service-account key.
 - [ ] Configure replacement credentials in the selected deployment secret manager.
-- [ ] Complete live-provider and browser-network verification with replacement credentials.
+- [x] Complete live-provider and browser-network verification with replacement credentials.
 
 ## PR 7 — Personal-project flight provider (`feat/serpapi-flight-search`)
 

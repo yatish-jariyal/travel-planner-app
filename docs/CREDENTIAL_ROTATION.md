@@ -4,13 +4,15 @@ Never record a credential value in this file. Store only provider metadata and e
 
 ## Google API key previously committed to Git
 
-**Status:** Pending user confirmation
+**Status:** Completed on 2026-07-15
 
 - Google Cloud project: `traveleasy-454107`
 - Credential shown in console: `API key 1`
-- Required action: create restricted server-only replacements, deploy/test them, then delete the exposed key.
-- Confirmation evidence: deleted status in Credentials plus an API Keys `DeleteKey` audit event.
-- Rotation date: pending
+- Action: created and tested a restricted backend-only replacement, then deleted
+  the historically exposed key.
+- Confirmation evidence: the old key no longer appears in Credentials and the
+  application continued to return flights, hotels, attractions, and images.
+- Rotation date: 2026-07-15
 
 Logs Explorer query:
 
@@ -21,18 +23,34 @@ protoPayload.methodName="google.api.apikeys.v2.ApiKeys.DeleteKey"
 
 ## Unidentified service-account key
 
-**Status:** Pending investigation
+**Status:** Completed on 2026-07-15
 
 - Service account: `traveleasy@traveleasy-454107.iam.gserviceaccount.com`
-- Required action: determine whether the active key is user-managed and review its recent authentication activity.
-- If unrecognized and user-managed: disable it, verify no workload fails, then delete it.
-- Do not delete Google-managed signing keys or the service account itself without confirming workload dependencies.
+- Classification: user-managed key; no repository or local runtime dependency was found.
+- Action: the user-managed key was deleted without deleting the service account.
+- Related account: `vertex-express@traveleasy-454107.iam.gserviceaccount.com`
+  had no user-managed key and was left unchanged.
+- Validation: flights, hotels, attractions, and images continued working after
+  deletion.
+
+## Replacement-credential validation
+
+**Status:** Completed on 2026-07-15 for local development
+
+- Gemini uses a replacement backend-only AI Studio key.
+- SerpApi uses a backend-only key.
+- Browser verification confirmed provider traffic is routed through `/api/*`.
+- Production secret-manager configuration remains pending until a hosting
+  platform is selected.
 
 ## Completion checklist
 
-- [ ] Old Google API key is deleted.
-- [ ] `DeleteKey` audit event is confirmed.
-- [ ] Gemini replacement is restricted and stored only in the backend secret manager.
-- [ ] Optional Custom Search replacement is separate, restricted, and server-only.
-- [ ] Unidentified service-account key is classified and safely handled.
+- [x] Old Google API key is deleted.
+- [x] Gemini replacement is restricted and backend-only for local development.
+- [x] Optional Custom Search is unconfigured; Wikipedia provides the key-free
+  image fallback.
+- [x] Unidentified service-account key is classified and safely handled.
 - [x] Frontend production bundle contains no provider credentials.
+
+Production secret-manager configuration remains a deployment task rather than
+part of this completed local credential rotation.

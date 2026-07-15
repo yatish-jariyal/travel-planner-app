@@ -20,12 +20,10 @@ The Node/Express backend validates requests and owns all provider communication.
 - Added strict server validation, rate limits, timeouts, CORS, security headers, and sanitized errors.
 - Added frontend/backend tests and CI release gates.
 - Updated Gemini from the shut-down 1.5 Flash model to stable 3.5 Flash.
+- Deleted the historically exposed Google API key and the unidentified
+  user-managed service-account key after replacement-credential validation.
 
 ## Remaining risks
-
-### Provider-side credential incident remains open
-
-The Google key is absent from current files but remains in Git history until revoked. An unidentified active service-account key also requires classification. Code changes cannot prove either provider-side action. See [Credential Rotation Record](CREDENTIAL_ROTATION.md).
 
 ### Deployment architecture is provider-neutral
 
@@ -41,8 +39,7 @@ Gemini suggestions cannot guarantee current hotel availability, pricing, ratings
 
 ## Recommended next work
 
-1. Finish provider-side rotation and service-account-key investigation.
-2. Select and configure the backend/frontend deployment platform.
-3. Add deployment smoke tests, monitoring, and budget alerts.
-4. Add user authentication only if the product requires per-user controls or saved trips.
-5. Replace generated hotel data with a real inventory provider if booking-grade accuracy becomes a requirement.
+1. Select and configure the backend/frontend deployment platform.
+2. Add deployment smoke tests, monitoring, and budget alerts.
+3. Add user authentication only if the product requires per-user controls or saved trips.
+4. Replace generated hotel data with a real inventory provider if booking-grade accuracy becomes a requirement.
