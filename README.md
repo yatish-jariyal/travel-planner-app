@@ -114,4 +114,8 @@ Do not commit credentials, `.env`, generated builds, or unrelated changes.
 
 ## Current status
 
-Secret-bearing provider operations have moved out of the browser. Production deployment remains blocked until the historically exposed Google API key and the unidentified active service-account key are handled and the chosen hosting environment is configured with a secret manager, HTTPS, monitoring, and an approved frontend origin.
+Secret-bearing provider operations have moved out of the browser, and the
+historically exposed Google API key plus the unidentified user-managed
+service-account key have been deleted. Production deployment now depends on
+configuring the chosen hosting environment with a secret manager, HTTPS,
+monitoring, and an approved frontend origin.

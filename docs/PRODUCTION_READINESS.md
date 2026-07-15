@@ -18,8 +18,6 @@ The repository now has a project-owned API boundary. SerpApi flight search, Gemi
 
 ## Remaining release blockers
 
-- Confirm deletion of the Google API key historically committed to Git.
-- Classify and safely disable/delete the unidentified active user-managed service-account key, if applicable.
 - Store replacement credentials in the selected platform's secret manager.
 - Select a deployment platform and configure HTTPS, routing, monitoring, budgets, rollback, and exact production CORS origins.
 - Decide whether production scale requires a shared rate-limit store.
@@ -65,4 +63,6 @@ Generated hotel prices, availability, attraction fees, and ratings are guidance 
 
 ## Current decision
 
-The code architecture is appropriate for controlled backend deployment. A public production launch remains blocked on the provider-side credential actions and hosting controls listed above.
+The code architecture is appropriate for controlled backend deployment, and
+provider-side credential rotation is complete. A public production launch
+remains blocked on the hosting controls listed above.
