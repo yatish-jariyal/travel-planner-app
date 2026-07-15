@@ -3,21 +3,14 @@ import type { LocationData } from "./types";
 import { validateTravelForm } from "./travelFormValidation";
 
 const createLocation = (iataCode: string): LocationData => ({
-  type: "location",
   name: iataCode,
   id: iataCode,
-  timeZoneOffset: "+00:00",
   iataCode,
-  geoCode: { latitude: 0, longitude: 0 },
   address: {
     cityName: iataCode,
-    cityCode: iataCode,
     countryName: "Test Country",
     countryCode: "TC",
-    stateCode: "TS",
-    regionCode: "TR",
   },
-  analytics: { travelers: { score: 1 } },
 });
 
 describe("validateTravelForm", () => {

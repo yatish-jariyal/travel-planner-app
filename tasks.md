@@ -79,3 +79,18 @@ This checklist mirrors the phased development plan. Check items only after the c
 - [ ] Classify and safely handle the unidentified active service-account key.
 - [ ] Configure replacement credentials in the selected deployment secret manager.
 - [ ] Complete live-provider and browser-network verification with replacement credentials.
+
+## PR 7 — Personal-project flight provider (`feat/serpapi-flight-search`)
+
+- [x] Replace Amadeus authentication and flight requests with SerpApi Google Flights.
+- [x] Replace provider-specific flight types with a normalized project contract.
+- [x] Include both departure and return dates in flight searches.
+- [x] Cache identical flight searches for 15 minutes.
+- [x] Replace remote airport autocomplete with a local OurAirports index.
+- [x] Limit the index to scheduled-service airports with IATA codes.
+- [x] Remove active Amadeus configuration and provider code.
+- [x] Add airport ranking, SerpApi normalization, cache, and route tests.
+- [x] Add all-airports metro searches and canonical destination city names.
+- [x] Verify one live SerpApi search without exposing the key.
+- [x] Update environment, quota, attribution, and deployment documentation.
+- [x] Complete the final form-to-results browser check manually.

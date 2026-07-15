@@ -1,9 +1,9 @@
 export interface AirportService {
-  search(keyword: string): Promise<unknown[]>;
+  search(keyword: string): Promise<AirportResult[]>;
 }
 
 export interface FlightService {
-  search(payload: FlightSearchPayload): Promise<unknown[]>;
+  search(payload: FlightSearchPayload): Promise<FlightResult[]>;
 }
 
 export interface TravelService {
@@ -17,16 +17,36 @@ export interface Services {
 }
 
 export interface FlightSearchPayload {
-  currencyCode: string;
-  originDestinations: Array<{
-    id: string;
-    originLocationCode: string;
-    destinationLocationCode: string;
-    departureDateTimeRange: { date: string };
-  }>;
-  travelers: Array<{ id: string; travelerType: string }>;
-  sources: string[];
-  searchCriteria: { maxFlightOffers: number };
+  originCode: string;
+  destinationCode: string;
+  departureDate: string;
+  returnDate: string;
+}
+
+export interface AirportResult {
+  id: string;
+  iataCode: string;
+  flightSearchCode?: string;
+  name: string;
+  address: {
+    cityName: string;
+    countryName: string;
+    countryCode: string;
+  };
+}
+
+export interface FlightResult {
+  id: string;
+  airline: string;
+  airlineLogo: string;
+  flightNumber: string;
+  departure: { airportCode: string; airportName: string; at: string };
+  arrival: { airportCode: string; airportName: string; at: string };
+  durationMinutes: number;
+  stops: number;
+  price: { currency: string; amount: number };
+  travelClass: string;
+  tripType: string;
 }
 
 export interface TravelInfoInput {

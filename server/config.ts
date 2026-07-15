@@ -7,16 +7,15 @@ const environmentSchema = z.object({
   PORT: positiveInteger(3000),
   FRONTEND_ORIGIN: z.string().default("http://localhost:5173"),
   PROVIDER_TIMEOUT_MS: positiveInteger(15_000),
-  AMADEUS_API_BASE_URL: z
-    .url()
-    .default("https://test.api.amadeus.com"),
-  AMADEUS_TOKEN_URL: z
-    .url()
-    .default("https://test.api.amadeus.com/v1/security/oauth2/token"),
-  AMADEUS_CLIENT_ID: z.string().trim().min(1).optional(),
-  AMADEUS_CLIENT_SECRET: z.string().trim().min(1).optional(),
+  SERPAPI_API_BASE_URL: z.url().default("https://serpapi.com/search.json"),
+  SERPAPI_API_KEY: z.string().trim().min(1).optional(),
+  FLIGHT_SEARCH_CURRENCY: z.string().trim().regex(/^[A-Z]{3}$/).default("INR"),
+  FLIGHT_SEARCH_COUNTRY: z.string().trim().regex(/^[a-z]{2}$/).default("in"),
+  FLIGHT_SEARCH_LANGUAGE: z.string().trim().regex(/^[a-z]{2}$/).default("en"),
+  FLIGHT_SEARCH_CACHE_TTL_MS: positiveInteger(900_000),
   GEMINI_API_KEY: z.string().trim().min(1).optional(),
-  GEMINI_MODEL: z.string().trim().min(1).default("gemini-3.5-flash"),
+  GEMINI_MODEL: z.string().trim().min(1).default("gemini-3.1-flash-lite"),
+  GEMINI_TIMEOUT_MS: positiveInteger(60_000),
   GOOGLE_SEARCH_API_KEY: z.string().trim().optional(),
   GOOGLE_SEARCH_ENGINE_ID: z.string().trim().optional(),
 });
@@ -50,15 +49,18 @@ export const loadConfig = (environment: NodeJS.ProcessEnv = process.env) => {
       .map((origin) => origin.trim())
       .filter(Boolean),
     providerTimeoutMs: parsed.data.PROVIDER_TIMEOUT_MS,
-    amadeus: {
-      apiBaseUrl: parsed.data.AMADEUS_API_BASE_URL.replace(/\/$/, ""),
-      tokenUrl: parsed.data.AMADEUS_TOKEN_URL,
-      clientId: parsed.data.AMADEUS_CLIENT_ID,
-      clientSecret: parsed.data.AMADEUS_CLIENT_SECRET,
+    flightSearch: {
+      apiBaseUrl: parsed.data.SERPAPI_API_BASE_URL,
+      apiKey: parsed.data.SERPAPI_API_KEY,
+      currency: parsed.data.FLIGHT_SEARCH_CURRENCY,
+      country: parsed.data.FLIGHT_SEARCH_COUNTRY,
+      language: parsed.data.FLIGHT_SEARCH_LANGUAGE,
+      cacheTtlMs: parsed.data.FLIGHT_SEARCH_CACHE_TTL_MS,
     },
     gemini: {
       apiKey: parsed.data.GEMINI_API_KEY,
       model: parsed.data.GEMINI_MODEL,
+      timeoutMs: parsed.data.GEMINI_TIMEOUT_MS,
     },
     googleSearch: {
       apiKey: googleSearchApiKey,

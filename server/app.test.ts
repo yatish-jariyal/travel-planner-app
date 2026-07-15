@@ -14,18 +14,10 @@ const createMockServices = (): Services => ({
 });
 
 const validFlightRequest = {
-  currencyCode: "INR",
-  originDestinations: [
-    {
-      id: "1",
-      originLocationCode: "DEL",
-      destinationLocationCode: "BOM",
-      departureDateTimeRange: { date: "2026-08-01" },
-    },
-  ],
-  travelers: [{ id: "1", travelerType: "ADULT" }],
-  sources: ["GDS"],
-  searchCriteria: { maxFlightOffers: 20 },
+  originCode: "DEL",
+  destinationCode: "BOM",
+  departureDate: "2026-08-01",
+  returnDate: "2026-08-03",
 };
 
 describe("API", () => {

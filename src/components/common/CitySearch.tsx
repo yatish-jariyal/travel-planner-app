@@ -67,11 +67,14 @@ const CitySearch = ({
   };
 
   const handleCitySelect = (location: LocationData) => {
-    setQuery(location.iataCode);
+    const selectedValue = location.flightSearchCode
+      ? location.address.cityName
+      : location.iataCode;
+    setQuery(selectedValue);
     setShowDropdown(false);
 
     if (onQueryChange) {
-      onQueryChange(location.iataCode);
+      onQueryChange(selectedValue);
     }
 
     if (onCitySelect) {
@@ -156,7 +159,10 @@ const CitySearch = ({
               <div className="font-medium">{location.name}</div>
               <div className="text-sm text-gray-600">
                 {location.address.cityName}, {location.address.countryName} (
-                {location.iataCode})
+                {location.flightSearchCode
+                  ? `all: ${location.flightSearchCode.replace(/,/g, ", ")}`
+                  : location.iataCode}
+                )
               </div>
             </button>
           ))}

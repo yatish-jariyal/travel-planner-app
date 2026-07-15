@@ -30,7 +30,8 @@ export const validateTravelForm = ({
   if (
     originCity &&
     destinationCity &&
-    originCity.iataCode === destinationCity.iataCode
+    (originCity.flightSearchCode ?? originCity.iataCode) ===
+      (destinationCity.flightSearchCode ?? destinationCity.iataCode)
   ) {
     errors.push("Origin and destination must be different.");
   }

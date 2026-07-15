@@ -18,30 +18,23 @@ Replace the placeholders, then run `npm run dev`. The command starts the API on 
 | `PORT` | Optional | Backend port; defaults to `3000`. |
 | `FRONTEND_ORIGIN` | Required for cross-origin deployment | Comma-separated browser origins allowed by backend CORS. |
 | `PROVIDER_TIMEOUT_MS` | Optional | Outbound provider timeout; defaults to 15 seconds. |
-| `AMADEUS_API_BASE_URL` | Required for flights | Backend Amadeus API base URL. |
-| `AMADEUS_TOKEN_URL` | Required for flights | Backend OAuth token URL. |
-| `AMADEUS_CLIENT_ID` | Required for flights | Backend-only Amadeus client identifier. |
-| `AMADEUS_CLIENT_SECRET` | Required for flights | Backend-only Amadeus secret. |
+| `SERPAPI_API_BASE_URL` | Optional | SerpApi endpoint; defaults to `https://serpapi.com/search.json`. |
+| `SERPAPI_API_KEY` | Required for flights | Backend-only SerpApi credential. |
+| `FLIGHT_SEARCH_CURRENCY` | Optional | Three-letter result currency; defaults to `INR`. |
+| `FLIGHT_SEARCH_COUNTRY` | Optional | Two-letter Google Flights country; defaults to `in`. |
+| `FLIGHT_SEARCH_LANGUAGE` | Optional | Two-letter result language; defaults to `en`. |
+| `FLIGHT_SEARCH_CACHE_TTL_MS` | Optional | Identical-search cache lifetime; defaults to 15 minutes. |
 | `GEMINI_API_KEY` | Required for suggestions | Backend-only restricted Gemini credential. |
-| `GEMINI_MODEL` | Optional | Defaults to the stable `gemini-3.5-flash` model. |
+| `GEMINI_MODEL` | Optional | Defaults to the free-tier-friendly `gemini-3.1-flash-lite` model. |
+| `GEMINI_TIMEOUT_MS` | Optional | Gemini generation timeout; defaults to 60 seconds. |
 | `GOOGLE_SEARCH_API_KEY` | Optional pair | Backend-only Custom Search key. |
 | `GOOGLE_SEARCH_ENGINE_ID` | Optional pair | Search-engine identifier; configure with the search key or omit both. |
 
 Provider secrets are checked when their feature is requested, so `/api/health` remains available even when a provider is intentionally unconfigured.
 
-## Migrating an existing local `.env`
+## Removing the old Amadeus configuration
 
-Rename the old browser variables:
-
-| Remove | Replace with |
-| --- | --- |
-| `VITE_AMADEUS_API_BASE_URL` | `AMADEUS_API_BASE_URL` |
-| `VITE_TOKEN_URL` | `AMADEUS_TOKEN_URL` |
-| `VITE_CLIENT_ID` | `AMADEUS_CLIENT_ID` |
-| `VITE_CLIENT_SECRET` | `AMADEUS_CLIENT_SECRET` |
-| `VITE_GEMINI_API_KEY` | `GEMINI_API_KEY` |
-| `VITE_GOOGLE_SEARCH_API_KEY` | `GOOGLE_SEARCH_API_KEY` |
-| `VITE_GOOGLE_SEARCH_ENGINE_ID` | `GOOGLE_SEARCH_ENGINE_ID` |
+Delete `AMADEUS_API_BASE_URL`, `AMADEUS_TOKEN_URL`, `AMADEUS_CLIENT_ID`, and `AMADEUS_CLIENT_SECRET` from `.env`. The application no longer reads them. If an old Amadeus credential appeared in Git history, revoke it rather than reusing it.
 
 Do not copy an historically exposed Google key into the new server variable. Create a replacement restricted credential and revoke the old one using the [credential rotation procedure](CREDENTIAL_ROTATION.md).
 
@@ -51,7 +44,9 @@ Only `VITE_API_BASE_URL` may appear in frontend code. Vite compiles every `VITE_
 
 The backend now:
 
-- exchanges Amadeus credentials and caches the access token in server memory;
+- searches SerpApi and caches identical normalized results for 15 minutes;
+- searches the bundled OurAirports index without a provider request or key and
+  groups multi-airport cities for broader flight searches;
 - calls Gemini through the current server-side Google Gen AI SDK;
 - performs optional image search without returning the key;
 - validates and rejects unexpected request fields;

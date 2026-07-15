@@ -88,10 +88,117 @@ export const parseTravelDataResponse = (rawResponse: string) => {
 };
 
 const createPrompt = ({ destinationCity, startDate, endDate }: TravelInfoInput) => `Generate travel suggestions for ${destinationCity} for a stay from ${startDate} to ${endDate}.
-Return JSON with two arrays named hotels and attractions. Include up to 20 hotels and 10 attractions.
+Return JSON with two arrays named hotels and attractions. Include up to 12 hotels and 8 attractions.
 Each hotel must contain hotelName, stars, availability, price, description, location, and ratings.
 Each attraction must contain attractionName, description, location, entryFee, ratings, and imageUrl.
 Treat prices, availability, fees, and ratings as generated guidance rather than live booking inventory.`;
+
+const stringProperty = { type: "string" } as const;
+const travelResponseSchema = {
+  type: "object",
+  properties: {
+    hotels: {
+      type: "array",
+      maxItems: 12,
+      items: {
+        type: "object",
+        properties: {
+          hotelName: stringProperty,
+          stars: stringProperty,
+          availability: stringProperty,
+          price: stringProperty,
+          description: stringProperty,
+          location: stringProperty,
+          ratings: stringProperty,
+        },
+        required: [
+          "hotelName",
+          "stars",
+          "availability",
+          "price",
+          "description",
+          "location",
+          "ratings",
+        ],
+        additionalProperties: false,
+      },
+    },
+    attractions: {
+      type: "array",
+      maxItems: 8,
+      items: {
+        type: "object",
+        properties: {
+          attractionName: stringProperty,
+          description: stringProperty,
+          location: stringProperty,
+          entryFee: stringProperty,
+          ratings: stringProperty,
+          imageUrl: stringProperty,
+        },
+        required: [
+          "attractionName",
+          "description",
+          "location",
+          "entryFee",
+          "ratings",
+          "imageUrl",
+        ],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["hotels", "attractions"],
+  additionalProperties: false,
+} as const;
+
+export const geminiProviderError = (error: unknown) => {
+  if (isRecord(error)) {
+    const status = typeof error.status === "number" ? error.status : undefined;
+    const message = typeof error.message === "string" ? error.message : "";
+
+    if (status === 403 && /API_KEY_SERVICE_BLOCKED/i.test(message)) {
+      return new ProviderError(
+        "Gemini API access is blocked by this API key's restrictions.",
+        "Gemini",
+        503
+      );
+    }
+
+    if (
+      status === 403 &&
+      /SERVICE_DISABLED|has not been used|is disabled/i.test(message)
+    ) {
+      return new ProviderError(
+        "Gemini API is disabled for this Google Cloud project.",
+        "Gemini",
+        503
+      );
+    }
+
+    if (status === 429 && /prepayment credits are depleted/i.test(message)) {
+      return new ProviderError(
+        "Gemini prepaid billing credits are depleted.",
+        "Gemini",
+        429
+      );
+    }
+
+    if (status === 429) {
+      return new ProviderError(
+        "Gemini request quota has been reached.",
+        "Gemini",
+        429
+      );
+    }
+
+    if (status === 504 || /DEADLINE_EXCEEDED/i.test(message)) {
+      return new ProviderError("Gemini timed out.", "Gemini", 504);
+    }
+  }
+
+  return providerError("Gemini", error);
+};
 
 export const createTravelService = (
   config: ServerConfig,
@@ -107,7 +214,8 @@ export const createTravelService = (
         contents: createPrompt(input),
         config: {
           responseMimeType: "application/json",
-          httpOptions: { timeout: config.providerTimeoutMs },
+          responseJsonSchema: travelResponseSchema,
+          httpOptions: { timeout: config.gemini.timeoutMs },
         },
       });
       const travelData = parseTravelDataResponse(response.text ?? "");
@@ -141,7 +249,7 @@ export const createTravelService = (
 
       return { ...travelData, attractions };
     } catch (error) {
-      throw providerError("Gemini", error);
+      throw geminiProviderError(error);
     }
   },
 });

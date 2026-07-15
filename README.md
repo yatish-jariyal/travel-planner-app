@@ -1,12 +1,14 @@
 # Travel Planner App
 
-A full-stack React and Node travel-planning application that searches Amadeus flight data and uses Gemini to suggest hotels and attractions. Provider credentials stay in the project-owned API and are never compiled into the browser bundle.
+A full-stack React and Node travel-planning application that searches Google Flights data through SerpApi and uses Gemini to suggest hotels and attractions. Provider credentials stay in the project-owned API and are never compiled into the browser bundle.
 
 ## Features
 
-- Search for origin and destination airports through the Amadeus test API.
-- Search for flight offers for a selected departure date.
-- Generate hotel and attraction suggestions with Gemini 3.5 Flash.
+- Search a local public-domain index of scheduled-service airports, including
+  all-airports metro suggestions for cities with multiple airports.
+- Search for round-trip flight options for selected travel dates.
+- Cache identical flight searches to conserve the personal-project quota.
+- Generate hotel and attraction suggestions with Gemini 3.1 Flash Lite.
 - Optionally enrich attraction images through Google Custom Search.
 - Preserve partial results when one provider fails.
 - Validate browser requests at a rate-limited backend boundary.
@@ -14,12 +16,13 @@ A full-stack React and Node travel-planning application that searches Amadeus fl
 ## Architecture
 
 ```text
-React browser -> /api -> Node/Express API -> Amadeus
-                                      ├──> Gemini
-                                      └──> Google Custom Search (optional)
+React browser -> /api -> Node/Express API -> SerpApi Google Flights
+                         ├──> local OurAirports index
+                         ├──> Gemini
+                         └──> Google Custom Search (optional)
 ```
 
-The browser receives only `VITE_API_BASE_URL`, which is a public address. Amadeus credentials and Google keys are read only by the backend.
+The browser receives only `VITE_API_BASE_URL`, which is a public address. SerpApi and Google keys are read only by the backend.
 
 ## Tech stack
 
@@ -35,7 +38,7 @@ The browser receives only `VITE_API_BASE_URL`, which is a public address. Amadeu
 
 - Node.js 22 (pinned in `.nvmrc`)
 - npm
-- Amadeus API credentials
+- A SerpApi key
 - A restricted Gemini API key
 
 ### Installation

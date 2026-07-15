@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Flight, FlightArguments } from "./IFlights";
+import { Flight, FlightSearchRequest } from "./IFlights";
 import { getData } from "../utils/getFlights";
 import { getApiErrorMessage } from "../utils/apiClient";
 import type { RootState } from "./store";
@@ -18,7 +18,7 @@ const initialState: FlightsState = {
 
 export const fetchFlightsInfo = createAsyncThunk<
   Flight[],
-  FlightArguments,
+  FlightSearchRequest,
   { rejectValue: string }
 >(
   "travel/fetchFlightsInfo",

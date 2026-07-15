@@ -22,16 +22,15 @@ The platform must route the browser's `/api/*` requests to the Node process. If 
 | Route | Purpose |
 | --- | --- |
 | `GET /api/health` | Liveness check without provider access. |
-| `GET /api/airports?keyword=Delhi` | Validated Amadeus airport search. |
-| `POST /api/flights/search` | Validated Amadeus flight-offer request. |
+| `GET /api/airports?keyword=Delhi` | Local scheduled-service airport search. |
+| `POST /api/flights/search` | Cached SerpApi Google Flights search. |
 | `POST /api/travel-info` | Gemini suggestions plus optional image enrichment. |
 
 ## Secret storage
 
 Create server-side secrets for:
 
-- `AMADEUS_CLIENT_ID`
-- `AMADEUS_CLIENT_SECRET`
+- `SERPAPI_API_KEY`
 - `GEMINI_API_KEY`
 - optionally `GOOGLE_SEARCH_API_KEY`
 - optionally `GOOGLE_SEARCH_ENGINE_ID`
@@ -43,9 +42,9 @@ Grant the runtime identity access only to these secrets. Prefer workload identit
 - HTTPS at the public boundary.
 - Exact CORS origins; never use `*` with a credentialed application.
 - Request logs and error-rate monitoring without bodies, keys, prompts, tokens, or full provider responses.
-- Budget and quota alerts for Gemini, Google Search, and Amadeus.
+- Budget and quota alerts for Gemini, Google Search, and SerpApi.
 - A frontend rewrite from `/travel` to `index.html`.
 - A restrictive Content Security Policy allowing the API origin and required image sources.
 - Rolling deployment and rollback to the previous known-good build.
 
-The built-in in-memory rate limiter and token cache are suitable for a single-instance baseline. A multi-instance production deployment should use a shared rate-limit store and accept that each instance maintains its own Amadeus token cache, or introduce an approved shared cache.
+The built-in in-memory rate limiter and flight-search cache are suitable for a single-instance personal project. A multi-instance production deployment should use approved shared stores so instances enforce one rate limit and reuse cached searches.

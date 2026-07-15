@@ -1,11 +1,9 @@
 import { format } from "date-fns";
 
-export const formatDuration = (duration: string) => {
-  const hours = duration.match(/(\d+)H/);
-  const minutes = duration.match(/(\d+)M/);
-  return `${hours ? hours[1] + "h " : ""}${
-    minutes ? minutes[1] + "m" : ""
-  }`.trim();
+export const formatDuration = (durationMinutes: number) => {
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  return `${hours > 0 ? `${hours}h ` : ""}${minutes > 0 ? `${minutes}m` : ""}`.trim();
 };
 
 export const formatDate = (dateString: string) => {
@@ -25,3 +23,10 @@ export const getCabinDisplay = (cabin: string) => {
   };
   return cabinMap[cabin] || cabin;
 };
+
+export const formatPrice = (amount: number, currency: string) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
