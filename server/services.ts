@@ -6,6 +6,7 @@ import { createSerpApiFlightService } from "./features/flights/serpapi.service.j
 import type { FlightService } from "./features/flights/flights.types.js";
 import { createGeminiTravelGenerator } from "./features/travel-info/gemini/gemini.client.js";
 import { createAttractionImageService } from "./features/travel-info/images/attractionImages.service.js";
+import { createCachedTravelInfoService } from "./features/travel-info/travelInfo.cache.js";
 import { createTravelInfoService } from "./features/travel-info/travelInfo.service.js";
 import type { TravelService } from "./features/travel-info/travelInfo.types.js";
 
@@ -19,10 +20,11 @@ export const createServices = (config: ServerConfig): Services => {
   const providerClient = axios.create({ timeout: config.providerTimeoutMs });
   const travelGenerator = createGeminiTravelGenerator(config);
   const attractionImages = createAttractionImageService(config, providerClient);
+  const travelInfo = createTravelInfoService(travelGenerator, attractionImages);
 
   return {
     airports: createAirportService(),
     flights: createSerpApiFlightService(config, providerClient),
-    travel: createTravelInfoService(travelGenerator, attractionImages),
+    travel: createCachedTravelInfoService(travelInfo, config.travelInfoCache),
   };
 };

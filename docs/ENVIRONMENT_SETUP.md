@@ -29,6 +29,8 @@ Replace the placeholders, then run `npm run dev`. The command starts the API on 
 | `GEMINI_FALLBACK_MODEL` | Optional | Quota fallback; defaults to `gemini-3.1-flash-lite`. |
 | `GEMINI_FALLBACK_COOLDOWN_MS` | Optional | Time to keep using the fallback after primary-model quota exhaustion; defaults to 15 minutes. |
 | `GEMINI_TIMEOUT_MS` | Optional | Gemini generation timeout; defaults to 60 seconds. |
+| `TRAVEL_INFO_CACHE_TTL_MS` | Optional | Complete hotel, attraction, and image result cache lifetime; defaults to 24 hours. |
+| `TRAVEL_INFO_CACHE_MAX_ENTRIES` | Optional | Maximum process-local travel-information entries; defaults to 100. |
 | `GOOGLE_SEARCH_API_KEY` | Optional pair | Backend-only Custom Search key. |
 | `GOOGLE_SEARCH_ENGINE_ID` | Optional pair | Search-engine identifier; configure with the search key or omit both. |
 
@@ -50,6 +52,8 @@ The backend now:
 - searches the bundled OurAirports index without a provider request or key and
   groups multi-airport cities for broader flight searches;
 - calls Gemini through the current server-side Google Gen AI SDK;
+- caches successful complete travel-information results and coalesces identical
+  in-flight requests without caching provider failures;
 - performs optional image search without returning the key;
 - validates and rejects unexpected request fields;
 - enforces payload limits, rate limits, timeouts, controlled CORS, and security headers;

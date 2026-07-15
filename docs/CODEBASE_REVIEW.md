@@ -31,7 +31,10 @@ No hosting target has been chosen. Secret-manager integration, workload identity
 
 ### In-memory controls are instance-local
 
-Rate limits and the SerpApi search cache are process-local. They provide a secure baseline for personal and single-instance use. Horizontally scaled deployment should use shared stores and review provider quotas.
+Rate limits, the SerpApi search cache, and the complete travel-information cache
+are process-local. They provide a secure baseline for personal and
+single-instance use. Horizontally scaled deployment should use shared stores
+and review provider quotas.
 
 ### Generated travel information is not inventory
 
