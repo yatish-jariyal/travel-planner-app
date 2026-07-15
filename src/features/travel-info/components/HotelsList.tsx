@@ -1,4 +1,4 @@
-import { Hotel } from "../../redux/travelSlice";
+import type { Hotel } from "../travelInfo.types";
 import EmptyHotelsList from "./EmptyHotelsList";
 import HotelCard from "./HotelCard";
 

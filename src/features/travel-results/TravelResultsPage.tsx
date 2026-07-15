@@ -5,18 +5,18 @@ import {
   selectFlights,
   selectFlightsError,
   selectFlightsStatus,
-} from "../../redux/flightsSlice";
+} from "../flights/flights.slice";
 import {
   selectAttractions,
   selectHotels,
   selectTravelError,
   selectTravelStatus,
-} from "../../redux/travelSlice";
-import { useAppSelector } from "../../redux/hooks";
-import AttractionsList from "../attractions/AttractionsList";
-import FlightsList from "../flights/FlightsList";
-import HotelsList from "../hotels/HotelsList";
-import AsyncResult from "./AsyncResult";
+} from "../travel-info/travelInfo.slice";
+import { useAppSelector } from "../../app/hooks";
+import FlightsList from "../flights/components/FlightsList";
+import AttractionsList from "../travel-info/components/AttractionsList";
+import HotelsList from "../travel-info/components/HotelsList";
+import AsyncResult from "../../shared/components/AsyncResult";
 
 type TabId = "flights" | "hotels" | "attractions";
 
@@ -73,7 +73,7 @@ const tabs: TabDefinition[] = [
   },
 ];
 
-const TravelTabsPage = () => {
+const TravelResultsPage = () => {
   const [activeTab, setActiveTab] = useState<TabId>("flights");
   const hotels = useAppSelector(selectHotels);
   const attractions = useAppSelector(selectAttractions);
@@ -228,4 +228,4 @@ const TravelTabsPage = () => {
   );
 };
 
-export default TravelTabsPage;
+export default TravelResultsPage;

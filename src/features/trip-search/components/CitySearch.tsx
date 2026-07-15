@@ -1,8 +1,8 @@
 import { useState, useEffect, useId, useRef } from "react";
 import type { ChangeEvent } from "react";
-import { getAirport } from "../../utils/getFlights";
-import { getApiErrorMessage } from "../../utils/apiClient";
-import { LocationData } from "../../utils/types";
+import { searchAirports } from "../../airports/airports.api";
+import type { LocationData } from "../../airports/airports.types";
+import { getApiErrorMessage } from "../../../shared/api/apiClient";
 
 interface CitySearchProps {
   onQueryChange?: (query: string) => void;
@@ -38,7 +38,7 @@ const CitySearch = ({
     setError(null);
 
     try {
-      const locations = await getAirport(searchQuery);
+      const locations = await searchAirports(searchQuery);
       setLocations(locations);
       setShowDropdown(true);
     } catch (error) {

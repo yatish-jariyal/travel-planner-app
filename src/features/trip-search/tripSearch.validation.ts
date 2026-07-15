@@ -1,4 +1,4 @@
-import type { LocationData } from "./types";
+import type { LocationData } from "../airports/airports.types";
 
 interface TravelFormValues {
   originCity: LocationData | null;

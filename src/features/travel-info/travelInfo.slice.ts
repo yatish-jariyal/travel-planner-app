@@ -1,33 +1,13 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getTravelInfoFromAI } from "../utils/getAPI";
-import { getApiErrorMessage } from "../utils/apiClient";
-import type { RootState } from "./store";
-
-export interface Hotel {
-  hotelName: string;
-  stars: string;
-  availability: string;
-  price: string;
-  description: string;
-  location: string;
-  ratings: string;
-}
-
-export interface Attraction {
-  attractionName: string;
-  description: string;
-  location: string;
-  entryFee: string;
-  ratings: string;
-  imageUrl: string;
-  imageSourceName?: string;
-  imageSourceUrl?: string;
-}
-
-export interface TravelDataResponse {
-  hotels: Hotel[];
-  attractions: Attraction[];
-}
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import type { RootState } from "../../app/store";
+import { getApiErrorMessage } from "../../shared/api/apiClient";
+import { fetchTravelInfo } from "./travelInfo.api";
+import type {
+  Attraction,
+  Hotel,
+  TravelDataResponse,
+  TravelInfoRequest,
+} from "./travelInfo.types";
 
 interface TravelState {
   hotels: Hotel[];
@@ -43,25 +23,15 @@ const initialState: TravelState = {
   error: null,
 };
 
-interface FetchTravelInfoArguments {
-  destinationCity: string;
-  startDate: string;
-  endDate: string;
-}
-
-export const fetchTravelInfo = createAsyncThunk<
+export const loadTravelInfo = createAsyncThunk<
   TravelDataResponse,
-  FetchTravelInfoArguments,
+  TravelInfoRequest,
   { rejectValue: string }
 >(
-  "travel/fetchTravelInfo",
+  "travel/loadTravelInfo",
   async (data, { rejectWithValue }) => {
     try {
-      return await getTravelInfoFromAI(
-        data.destinationCity,
-        data.startDate,
-        data.endDate
-      );
+      return await fetchTravelInfo(data);
     } catch (error) {
       return rejectWithValue(
         getApiErrorMessage(error, "Unable to load hotels and attractions.")
@@ -83,16 +53,16 @@ const travelSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTravelInfo.pending, (state) => {
+      .addCase(loadTravelInfo.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchTravelInfo.fulfilled, (state, action) => {
+      .addCase(loadTravelInfo.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.hotels = action.payload.hotels;
         state.attractions = action.payload.attractions;
       })
-      .addCase(fetchTravelInfo.rejected, (state, action) => {
+      .addCase(loadTravelInfo.rejected, (state, action) => {
         state.status = "failed";
         state.error =
           action.payload ??

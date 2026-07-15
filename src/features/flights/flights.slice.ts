@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Flight, FlightSearchRequest } from "./IFlights";
-import { getData } from "../utils/getFlights";
-import { getApiErrorMessage } from "../utils/apiClient";
-import type { RootState } from "./store";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import type { RootState } from "../../app/store";
+import { getApiErrorMessage } from "../../shared/api/apiClient";
+import { searchFlights } from "./flights.api";
+import type { Flight, FlightSearchRequest } from "./flights.types";
 
 interface FlightsState {
   flights: Flight[];
@@ -16,15 +16,15 @@ const initialState: FlightsState = {
   error: null,
 };
 
-export const fetchFlightsInfo = createAsyncThunk<
+export const loadFlights = createAsyncThunk<
   Flight[],
   FlightSearchRequest,
   { rejectValue: string }
 >(
-  "travel/fetchFlightsInfo",
+  "flights/loadFlights",
   async (body, { rejectWithValue }) => {
     try {
-      return await getData(body);
+      return await searchFlights(body);
     } catch (error) {
       return rejectWithValue(getApiErrorMessage(error, "Unable to load flights."));
     }
@@ -43,15 +43,15 @@ const flightsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchFlightsInfo.pending, (state) => {
+      .addCase(loadFlights.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchFlightsInfo.fulfilled, (state, action) => {
+      .addCase(loadFlights.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.flights = action.payload;
       })
-      .addCase(fetchFlightsInfo.rejected, (state, action) => {
+      .addCase(loadFlights.rejected, (state, action) => {
         state.status = "failed";
         state.error =
           action.payload ?? action.error.message ?? "Unable to load flights.";

@@ -1,4 +1,4 @@
-import { Hotel } from "../../redux/travelSlice";
+import type { Hotel } from "../travelInfo.types";
 
 const HotelCard = ({ hotel }: { hotel: Hotel }) => {
   const starCount = Math.min(5, Math.max(0, Math.floor(Number(hotel.stars))));
