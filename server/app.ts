@@ -3,13 +3,11 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import type { ServerConfig } from "./config.js";
-import type { Services } from "./contracts.js";
-import { CorsOriginError, errorHandler } from "./errors.js";
-import {
-  airportQuerySchema,
-  flightSearchSchema,
-  travelInfoSchema,
-} from "./schemas.js";
+import { createAirportsRouter } from "./features/airports/airports.routes.js";
+import { createFlightsRouter } from "./features/flights/flights.routes.js";
+import { createTravelInfoRouter } from "./features/travel-info/travelInfo.routes.js";
+import type { Services } from "./services.js";
+import { CorsOriginError, errorHandler } from "./shared/errors.js";
 
 export const createApp = (services: Services, config: ServerConfig) => {
   const app = express();
@@ -43,32 +41,9 @@ export const createApp = (services: Services, config: ServerConfig) => {
     response.json({ status: "ok" });
   });
 
-  app.get("/api/airports", async (request, response, next) => {
-    try {
-      const { keyword } = airportQuerySchema.parse(request.query);
-      response.json({ data: await services.airports.search(keyword) });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-  app.post("/api/flights/search", async (request, response, next) => {
-    try {
-      const payload = flightSearchSchema.parse(request.body);
-      response.json({ data: await services.flights.search(payload) });
-    } catch (error) {
-      next(error);
-    }
-  });
-
-  app.post("/api/travel-info", async (request, response, next) => {
-    try {
-      const input = travelInfoSchema.parse(request.body);
-      response.json({ data: await services.travel.getTravelInfo(input) });
-    } catch (error) {
-      next(error);
-    }
-  });
+  app.use("/api/airports", createAirportsRouter(services.airports));
+  app.use("/api/flights", createFlightsRouter(services.flights));
+  app.use("/api/travel-info", createTravelInfoRouter(services.travel));
 
   app.use((_request, response) => {
     response.status(404).json({

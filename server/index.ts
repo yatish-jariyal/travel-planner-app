@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { createApp } from "./app.js";
 import { loadConfig } from "./config.js";
-import { writeLog } from "./logger.js";
+import { writeLog } from "./shared/logger.js";
 import { createServices } from "./services.js";
 
 const config = loadConfig();

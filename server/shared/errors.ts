@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { ServiceConfigurationError } from "./config.js";
+import { ServiceConfigurationError } from "../config.js";
 import { writeLog } from "./logger.js";
 
 export class ProviderError extends Error {
