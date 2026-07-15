@@ -96,19 +96,22 @@ export const parseTravelDataResponse = (rawResponse: string) => {
   } satisfies TravelDataResponse;
 };
 
+export const TRAVEL_SUGGESTION_COUNT = 6;
+
 const createPrompt = ({ destinationCity, startDate, endDate }: TravelInfoInput) => `Generate travel suggestions for ${destinationCity} for a stay from ${startDate} to ${endDate}.
-Return JSON with two arrays named hotels and attractions. Include up to 12 hotels and 8 attractions.
+Return JSON with two arrays named hotels and attractions. Include exactly ${TRAVEL_SUGGESTION_COUNT} hotels and exactly ${TRAVEL_SUGGESTION_COUNT} attractions.
 Each hotel must contain hotelName, stars, availability, price, description, location, and ratings.
 Each attraction must contain attractionName, description, location, entryFee, and ratings.
 Treat prices, availability, fees, and ratings as generated guidance rather than live booking inventory.`;
 
 const stringProperty = { type: "string" } as const;
-const travelResponseSchema = {
+export const travelResponseSchema = {
   type: "object",
   properties: {
     hotels: {
       type: "array",
-      maxItems: 12,
+      minItems: TRAVEL_SUGGESTION_COUNT,
+      maxItems: TRAVEL_SUGGESTION_COUNT,
       items: {
         type: "object",
         properties: {
@@ -134,7 +137,8 @@ const travelResponseSchema = {
     },
     attractions: {
       type: "array",
-      maxItems: 8,
+      minItems: TRAVEL_SUGGESTION_COUNT,
+      maxItems: TRAVEL_SUGGESTION_COUNT,
       items: {
         type: "object",
         properties: {
@@ -217,7 +221,7 @@ const findAttractionImage = async (
           generator: "search",
           gsrsearch: `${attraction.attractionName} ${attraction.location}`,
           gsrnamespace: "0",
-          gsrlimit: "1",
+          gsrlimit: "5",
           prop: "pageimages",
           piprop: "thumbnail",
           pithumbsize: "800",
@@ -225,7 +229,9 @@ const findAttractionImage = async (
         },
       }
     );
-    const page = response.data.query?.pages?.[0];
+    const page = response.data.query?.pages?.find(
+      (candidate) => candidate.thumbnail?.source && candidate.title
+    );
     if (page?.thumbnail?.source && page.title) {
       return {
         imageUrl: page.thumbnail.source,
