@@ -4,6 +4,8 @@ import {
   geminiProviderError,
   parseTravelDataResponse,
   shouldFallbackGeminiModel,
+  TRAVEL_SUGGESTION_COUNT,
+  travelResponseSchema,
 } from "./travel.js";
 
 const completeHotel = {
@@ -67,6 +69,20 @@ describe("parseTravelDataResponse", () => {
   it("rejects malformed provider data", () => {
     expect(() => parseTravelDataResponse("not json")).toThrow(ProviderError);
     expect(() => parseTravelDataResponse("[]")).toThrow(ProviderError);
+  });
+});
+
+describe("travel response schema", () => {
+  it("requires a consistent number of hotels and attractions", () => {
+    expect(TRAVEL_SUGGESTION_COUNT).toBe(6);
+    expect(travelResponseSchema.properties.hotels).toMatchObject({
+      minItems: 6,
+      maxItems: 6,
+    });
+    expect(travelResponseSchema.properties.attractions).toMatchObject({
+      minItems: 6,
+      maxItems: 6,
+    });
   });
 });
 
