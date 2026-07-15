@@ -94,3 +94,14 @@ This checklist mirrors the phased development plan. Check items only after the c
 - [x] Verify one live SerpApi search without exposing the key.
 - [x] Update environment, quota, attribution, and deployment documentation.
 - [x] Complete the final form-to-results browser check manually.
+
+## Follow-up — Travel-information cache (`feat/travel-info-cache`)
+
+- [x] Cache successful complete hotel, attraction, and image results.
+- [x] Normalize destination and date cache keys.
+- [x] Bound the cache by TTL and maximum entry count.
+- [x] Evict the least recently used entry at the configured limit.
+- [x] Coalesce simultaneous identical requests.
+- [x] Never cache provider failures.
+- [x] Add cache hit, expiry, eviction, concurrency, and failure tests.
+- [x] Document local configuration and single-instance limitations.

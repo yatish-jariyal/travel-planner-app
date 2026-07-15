@@ -7,9 +7,11 @@ A full-stack React and Node travel-planning application that searches Google Fli
 - Search a local public-domain index of scheduled-service airports, including
   all-airports metro suggestions for cities with multiple airports.
 - Search for round-trip flight options for selected travel dates.
-- Cache identical flight searches to conserve the personal-project quota.
+- Cache identical flight searches and complete travel suggestions to conserve
+  personal-project provider quotas.
 - Generate hotel and attraction suggestions with Gemini Flash and automatically
   fall back to Flash Lite when the primary model's free quota is exhausted.
+- Coalesce simultaneous identical travel searches into one Gemini request.
 - Enrich attractions with optional Google image search or free-license
   Wikipedia page thumbnails.
 - Optionally enrich attraction images through Google Custom Search.

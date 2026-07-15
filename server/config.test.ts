@@ -14,6 +14,10 @@ describe("server configuration", () => {
     expect(config.gemini.fallbackModel).toBe("gemini-3.1-flash-lite");
     expect(config.gemini.fallbackCooldownMs).toBe(900_000);
     expect(config.gemini.timeoutMs).toBe(60_000);
+    expect(config.travelInfoCache).toEqual({
+      ttlMs: 86_400_000,
+      maxEntries: 100,
+    });
     expect(config.flightSearch).toEqual(
       expect.objectContaining({
         currency: "INR",

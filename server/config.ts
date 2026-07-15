@@ -22,6 +22,8 @@ const environmentSchema = z.object({
     .default("gemini-3.1-flash-lite"),
   GEMINI_FALLBACK_COOLDOWN_MS: positiveInteger(900_000),
   GEMINI_TIMEOUT_MS: positiveInteger(60_000),
+  TRAVEL_INFO_CACHE_TTL_MS: positiveInteger(86_400_000),
+  TRAVEL_INFO_CACHE_MAX_ENTRIES: positiveInteger(100),
   GOOGLE_SEARCH_API_KEY: z.string().trim().optional(),
   GOOGLE_SEARCH_ENGINE_ID: z.string().trim().optional(),
 });
@@ -69,6 +71,10 @@ export const loadConfig = (environment: NodeJS.ProcessEnv = process.env) => {
       fallbackModel: parsed.data.GEMINI_FALLBACK_MODEL,
       fallbackCooldownMs: parsed.data.GEMINI_FALLBACK_COOLDOWN_MS,
       timeoutMs: parsed.data.GEMINI_TIMEOUT_MS,
+    },
+    travelInfoCache: {
+      ttlMs: parsed.data.TRAVEL_INFO_CACHE_TTL_MS,
+      maxEntries: parsed.data.TRAVEL_INFO_CACHE_MAX_ENTRIES,
     },
     googleSearch: {
       apiKey: googleSearchApiKey,

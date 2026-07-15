@@ -24,7 +24,7 @@ The platform must route the browser's `/api/*` requests to the Node process. If 
 | `GET /api/health` | Liveness check without provider access. |
 | `GET /api/airports?keyword=Delhi` | Local scheduled-service airport search. |
 | `POST /api/flights/search` | Cached SerpApi Google Flights search. |
-| `POST /api/travel-info` | Gemini suggestions plus optional image enrichment. |
+| `POST /api/travel-info` | Cached Gemini suggestions plus optional image enrichment. |
 
 ## Secret storage
 
@@ -47,4 +47,9 @@ Grant the runtime identity access only to these secrets. Prefer workload identit
 - A restrictive Content Security Policy allowing the API origin and required image sources.
 - Rolling deployment and rollback to the previous known-good build.
 
-The built-in in-memory rate limiter and flight-search cache are suitable for a single-instance personal project. A multi-instance production deployment should use approved shared stores so instances enforce one rate limit and reuse cached searches.
+The built-in in-memory rate limiter, flight-search cache, and travel-information
+cache are suitable for a single-instance personal project. The travel cache
+stores up to 100 successful complete results for 24 hours by default and
+coalesces identical in-flight requests. A multi-instance production deployment
+should use approved shared stores so instances enforce one rate limit and reuse
+cached searches.
